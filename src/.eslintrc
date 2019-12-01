@@ -1,0 +1,6 @@
+{
+  "extends": ["adpyke-es6", "prettier"],
+  "parserOptions": {
+    "sourceType": "module"
+  }
+}
