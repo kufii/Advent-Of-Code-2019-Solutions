@@ -27,7 +27,7 @@ export default () => {
 
   const loadButton = (text, onclick) =>
     m(
-      'button.pure-button.pure-button-primary',
+      'button.pure-button.pure-button-primary' + z`m 4 2`,
       {
         type: 'button',
         disabled: loading,
