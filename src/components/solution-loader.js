@@ -57,10 +57,10 @@ export default () => {
         m(
           'pre' +
             z`
-          line-height 1em;
-          padding 5px;
-          overflow visible;
-        `,
+            line-height 1em;
+            padding 5px;
+            overflow visible;
+          `,
           output
         )
       ])
