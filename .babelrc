@@ -4,8 +4,7 @@
     [
       "@babel/plugin-transform-runtime",
       {
-        "regenerator": true,
-        "corejs": 3
+        "regenerator": true
       }
     ]
   ]

@@ -86,7 +86,7 @@ export default () => {
             m(
               'div',
               { hidden: !intervalRunning },
-              m('button.pure-button', { onclick: stopInterval }, 'Stop!')
+              m('button.pure-button', { type: 'button', onclick: stopInterval }, 'Stop!')
             )
           ])
         ),
