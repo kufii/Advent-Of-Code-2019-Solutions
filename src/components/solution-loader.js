@@ -4,9 +4,14 @@ import Select from './select';
 import solutions from '../solutions';
 
 export default () => {
-  let day = 0;
+  let day = localStorage.getItem('day') || 0;
   let loading = false;
   let output = '';
+
+  const setDay = newDay => {
+    day = newDay;
+    localStorage.setItem('day', day);
+  };
 
   const load = fn => {
     loading = true;
@@ -49,7 +54,7 @@ export default () => {
                 text: `Day ${index + 1}`
               })),
               selected: day,
-              onselect: newDay => (day = newDay)
+              onselect: setDay
             }),
             m('div', [
               loadButton('Part 1', () => load(solutions[day].part1)),
