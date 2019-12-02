@@ -2,11 +2,11 @@ import input from './input';
 
 const getInput = () => input.split('\n').map(Number);
 
-const getFuel = n => Math.floor(n / 3 - 2);
+const getFuel = n => Math.max(Math.floor(n / 3 - 2), 0);
 
 const getFuelTotal = n => {
   const fuel = getFuel(n);
-  return fuel > 0 ? fuel + getFuelTotal(fuel) : 0;
+  return fuel && fuel + getFuelTotal(fuel);
 };
 
 const sum = (a, b) => a + b;
