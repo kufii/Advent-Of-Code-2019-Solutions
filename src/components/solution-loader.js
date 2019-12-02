@@ -44,7 +44,10 @@ export default () => {
           m('fieldset', [
             m('label', 'Day: '),
             m(Select, {
-              options: solutions.map((s, index) => ({ value: index, text: `Day ${index + 1}` })),
+              options: solutions.map((_, index) => ({
+                value: index,
+                text: `Day ${index + 1}`
+              })),
               selected: day,
               onselect: newDay => (day = newDay)
             }),
