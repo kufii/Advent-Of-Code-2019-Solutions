@@ -6,6 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "webpack src/index.js --output bin/app.js -d --watch",
+    "build": "webpack src/index.js --output bin/app.js -d",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc,html}\"",
     "check:format": "prettier --check \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc,html}\"",
@@ -23,12 +24,10 @@
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
     "babel-loader": "^8.0.6",
-    "css-loader": "^3.2.0",
     "eslint": "^6.7.2",
     "eslint-config-adpyke-es6": "^1.4.13",
     "eslint-config-prettier": "^6.7.0",
     "prettier": "^1.19.1",
-    "style-loader": "^1.0.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   }
