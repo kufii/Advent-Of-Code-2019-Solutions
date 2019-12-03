@@ -11,6 +11,8 @@ const parseInput = () =>
 
 const key = ({ x, y }) => `${x},${y}`;
 
+const unKey = key => [key.split(',').map(Number)].map(([x, y]) => ({ x, y }))[0];
+
 const DIRS = {
   U: { x: 0, y: 1 },
   D: { x: 0, y: -1 },
@@ -35,10 +37,7 @@ const getPoints = wire => {
 };
 
 const getIntersections = wires =>
-  [...wires[0].values()]
-    .filter(value => wires.every(w => w.has(value)))
-    .map(str => str.split(',').map(Number))
-    .map(([x, y]) => ({ x, y }));
+  [...wires[0].values()].filter(value => wires.every(w => w.has(value))).map(unKey);
 
 const getDistanceToPoint = (wire, { x, y }) => {
   let steps = 0;
