@@ -20,45 +20,35 @@ const DIRS = {
   R: { x: 1, y: 0 }
 };
 
-const getDistance = (a, b) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
-
 const getPoints = wire => {
-  const set = new Set();
+  const arr = [];
   const pos = { x: 0, y: 0 };
   wire.forEach(({ direction, distance }) =>
     nTimes(distance, () => {
       const { x, y } = DIRS[direction];
       pos.x += x;
       pos.y += y;
-      set.add(key(pos));
+      arr.push(key(pos));
     })
   );
-  return set;
+  return arr;
 };
 
-const getIntersections = wires =>
-  [...wires[0].values()].filter(value => wires.every(w => w.has(value))).map(unKey);
-
-const getDistanceToPoint = (wire, { x, y }) => {
-  let steps = 0;
-  const pos = { x: 0, y: 0 };
-  for (const { direction, distance } of wire) {
-    const delta = DIRS[direction];
-    for (let n = 0; n < distance; n++) {
-      steps++;
-      pos.x += delta.x;
-      pos.y += delta.y;
-      if (pos.x === x && pos.y === y) return steps;
-    }
-  }
+const getIntersections = wires => {
+  const sets = wires.map(w => new Set(w));
+  return wires[0].filter(value => sets.every(w => w.has(value))).map(unKey);
 };
+
+const getManhattanDistance = (a, b) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+
+const getTravelDistance = (wire, point) => wire.indexOf(key(point)) + 1;
 
 export default {
   part1: () =>
     'Shortest Manhattan distance to an intersection: ' +
     Math.min(
       ...getIntersections(parseInput().map(getPoints)).map(point =>
-        getDistance(point, { x: 0, y: 0 })
+        getManhattanDistance(point, { x: 0, y: 0 })
       )
     ),
   part2() {
@@ -68,7 +58,7 @@ export default {
       'Shortest path to an intersection: ' +
       Math.min(
         ...getIntersections(points).map(point =>
-          wires.reduce((acc, wire) => acc + getDistanceToPoint(wire, point), 0)
+          points.reduce((acc, wire) => acc + getTravelDistance(wire, point), 0)
         )
       )
     );
