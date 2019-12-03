@@ -39,18 +39,22 @@ export default () => {
     stopInterval();
     loading = true;
     m.redraw();
-    Promise.resolve(fn())
-      .then(data => {
-        loading = false;
-        isGenerator(data) ? runGenerator(data) : (output = data.toString());
-      })
-      .then(m.redraw)
-      .catch(err => {
-        output = 'Error';
-        loading = false;
-        console.error(err);
-        m.redraw();
-      });
+    setTimeout(
+      () =>
+        Promise.resolve(fn())
+          .then(data => {
+            loading = false;
+            isGenerator(data) ? runGenerator(data) : (output = data.toString());
+          })
+          .then(m.redraw)
+          .catch(err => {
+            output = 'Error';
+            loading = false;
+            console.error(err);
+            m.redraw();
+          }),
+      0
+    );
   };
 
   const loadButton = (text, onclick) =>
