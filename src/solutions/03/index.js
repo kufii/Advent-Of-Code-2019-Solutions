@@ -1,5 +1,5 @@
 import input from './input';
-import { nTimes } from '../../util';
+import { nTimes, sum } from '../../util';
 
 const parseInput = () =>
   input.split('\n').map(wire =>
@@ -36,7 +36,7 @@ const getPoints = wire => {
 
 const getIntersections = wires => {
   const sets = wires.map(w => new Set(w));
-  return wires[0].filter(value => sets.every(w => w.has(value))).map(unKey);
+  return wires[0].filter(value => sets.slice(1).every(w => w.has(value))).map(unKey);
 };
 
 const getManhattanDistance = (a, b) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
@@ -52,13 +52,12 @@ export default {
       )
     ),
   part2() {
-    const wires = parseInput();
-    const points = wires.map(getPoints);
+    const wires = parseInput().map(getPoints);
     return (
       'Shortest path to an intersection: ' +
       Math.min(
-        ...getIntersections(points).map(point =>
-          points.reduce((acc, wire) => acc + getTravelDistance(wire, point), 0)
+        ...getIntersections(wires).map(point =>
+          wires.map(wire => getTravelDistance(wire, point)).reduce(sum)
         )
       )
     );
