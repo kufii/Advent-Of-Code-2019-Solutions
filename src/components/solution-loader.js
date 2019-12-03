@@ -17,15 +17,46 @@ export default () => {
     intervalRunning = false;
   };
 
+  const outputErr = err => {
+    stopInterval();
+    output = 'Error';
+    loading = false;
+    console.error(err);
+    m.redraw();
+  };
+
   const runGenerator = gen => {
     const data = gen();
     output = '';
     interval = setInterval(() => {
-      const { value, done } = data.next();
-      done ? stopInterval() : (output = value && value.toString());
-      m.redraw();
+      try {
+        const { value, done } = data.next();
+        done ? stopInterval() : (output = value && value.toString());
+        m.redraw();
+      } catch (err) {
+        outputErr(err);
+      }
     }, solutions[day].interval || 0);
     intervalRunning = true;
+  };
+
+  const load = fn => {
+    stopInterval();
+    loading = true;
+    m.redraw();
+    setTimeout(() => {
+      try {
+        Promise.resolve(fn())
+          .then(data => {
+            loading = false;
+            isGenerator(data) ? runGenerator(data) : (output = data.toString());
+          })
+          .then(m.redraw)
+          .catch(outputErr);
+      } catch (err) {
+        outputErr(err);
+      }
+    }, 0);
   };
 
   const changeDay = newDay => {
@@ -33,28 +64,6 @@ export default () => {
     day = newDay;
     localStorage.setItem('day', day);
     output = '';
-  };
-
-  const load = fn => {
-    stopInterval();
-    loading = true;
-    m.redraw();
-    setTimeout(
-      () =>
-        Promise.resolve(fn())
-          .then(data => {
-            loading = false;
-            isGenerator(data) ? runGenerator(data) : (output = data.toString());
-          })
-          .then(m.redraw)
-          .catch(err => {
-            output = 'Error';
-            loading = false;
-            console.error(err);
-            m.redraw();
-          }),
-      0
-    );
   };
 
   const loadButton = (text, onclick) =>
