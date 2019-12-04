@@ -1,3 +1,5 @@
+import { isString } from './types';
+
 export const makeArray = (ySize, xSize, fill) => {
   const arr = [];
   for (let y = 0; y < ySize; y++) {
@@ -25,6 +27,15 @@ export const sortNum = (a, b) => a - b;
 
 export const nTimes = (n, cb) => {
   for (let i = 0; i < n; i++) cb();
+};
+
+export const range = (start, stop) => {
+  const result = [];
+  const numOrCharCode = n => (isString(n) ? n.charCodeAt(0) : n);
+  for (let i = numOrCharCode(start); i <= numOrCharCode(stop); i++) {
+    result.push(isString(start) ? String.fromCharCode(i) : i);
+  }
+  return result;
 };
 
 export class InfiniteGrid {
