@@ -1,9 +1,10 @@
 const obj = ['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'].reduce(
-  (obj, name) => {
-    obj[`is${name}`] = a => Object.prototype.toString.call(a) === `[object ${name}]`;
-    return obj;
-  },
+  (obj, name) => ({
+    ...obj,
+    [`is${name}`]: a => Object.prototype.toString.call(a) === `[object ${name}]`
+  }),
   {
+    isArray: Array.isArray,
     isGenerator: a =>
       a instanceof
       function*() {
@@ -11,4 +12,13 @@ const obj = ['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'].redu
       }.constructor
   }
 );
-export const { isArguments, isFunction, isString, isNumber, isDate, isRegExp, isGenerator } = obj;
+export const {
+  isArguments,
+  isFunction,
+  isString,
+  isNumber,
+  isDate,
+  isRegExp,
+  isArray,
+  isGenerator
+} = obj;
