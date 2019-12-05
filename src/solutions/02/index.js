@@ -1,10 +1,10 @@
 import input from './input';
 import dedent from 'dedent';
 
-const getInput = () => input.split(',').map(Number);
+const parseInput = () => input.split(',').map(Number);
 
 const run = (noun, verb) => {
-  const ints = getInput();
+  const ints = parseInput();
   ints[1] = noun;
   ints[2] = verb;
   let pos = 0;
