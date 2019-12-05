@@ -28,13 +28,13 @@ const OPS = {
     fn: (nums, [mode1, mode2], num1, num2) =>
       getNum(nums, mode1, num1) ? getNum(nums, mode2, num2) : null,
     params: 2,
-    flow: 1
+    flow: true
   },
   6: {
     fn: (nums, [mode1, mode2], num1, num2) =>
       !getNum(nums, mode1, num1) ? getNum(nums, mode2, num2) : null,
     params: 2,
-    flow: 1
+    flow: true
   },
   7: {
     fn: (nums, [mode1, mode2], num1, num2, address) =>
