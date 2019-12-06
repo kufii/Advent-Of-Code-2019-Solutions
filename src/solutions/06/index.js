@@ -1,5 +1,5 @@
 import input from './input';
-import { sum, djikstra } from '../../util';
+import { sum, dijkstra } from '../../util';
 
 const parseInput = () =>
   input
@@ -30,5 +30,5 @@ export default {
   },
   part2: () =>
     '# of orbital transfers to get to the object SAN is orbiting: ' +
-    (djikstra(getGraph(parseInput()), 'YOU')[0].get('SAN') - 2)
+    (dijkstra(getGraph(parseInput()), 'YOU')[0].get('SAN') - 2)
 };

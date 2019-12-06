@@ -42,7 +42,7 @@ export const maxBy = cb => (a, b) => (cb(b) > cb(a) ? b : a);
 
 export const minBy = cb => (a, b) => (cb(b) < cb(a) ? b : a);
 
-export const djikstra = (graph, source) => {
+export const dijkstra = (graph, source) => {
   const nodes = new Set(Object.keys(graph));
   const dist = new Map();
   const prev = new Map();
