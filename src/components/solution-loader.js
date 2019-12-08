@@ -8,6 +8,7 @@ export default () => {
   let day = localStorage.getItem('day') || 0;
   let loading = false;
   let output = '';
+  let canvasVisible = false;
 
   let interval;
   let intervalRunning = false;
@@ -21,6 +22,7 @@ export default () => {
     stopInterval();
     output = 'Error';
     loading = false;
+    canvasVisible = false;
     console.error(err);
     m.redraw();
   };
@@ -49,7 +51,15 @@ export default () => {
         Promise.resolve(fn())
           .then(data => {
             loading = false;
-            isGenerator(data) ? runGenerator(data) : (output = data.toString());
+            if (isGenerator(data)) {
+              runGenerator(data);
+            } else if (data.canvasRender) {
+              canvasVisible = true;
+              data.canvasRender(document.querySelector('#canvas'));
+              output = data.message;
+            } else {
+              output = data.toString();
+            }
           })
           .then(m.redraw)
           .catch(outputErr);
@@ -64,6 +74,7 @@ export default () => {
     day = newDay;
     localStorage.setItem('day', day);
     output = '';
+    canvasVisible = false;
   };
 
   const loadButton = (text, onclick) =>
@@ -111,7 +122,8 @@ export default () => {
             overflow visible;
           `,
           loading ? 'Loading...' : output
-        )
+        ),
+        m('canvas#canvas', { hidden: !canvasVisible })
       ])
   };
 };
