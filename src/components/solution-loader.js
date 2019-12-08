@@ -13,6 +13,11 @@ export default () => {
   let interval;
   let intervalRunning = false;
 
+  const clearOutput = () => {
+    output = '';
+    canvasVisible = false;
+  };
+
   const stopInterval = () => {
     clearInterval(interval);
     intervalRunning = false;
@@ -20,16 +25,16 @@ export default () => {
 
   const outputErr = err => {
     stopInterval();
+    clearOutput();
     output = 'Error';
     loading = false;
-    canvasVisible = false;
     console.error(err);
     m.redraw();
   };
 
   const runGenerator = gen => {
     const data = gen();
-    output = '';
+    clearOutput();
     interval = setInterval(() => {
       try {
         const { value, done } = data.next();
@@ -44,6 +49,7 @@ export default () => {
 
   const load = fn => {
     stopInterval();
+    clearOutput();
     loading = true;
     m.redraw();
     setTimeout(() => {
@@ -73,8 +79,7 @@ export default () => {
     stopInterval();
     day = newDay;
     localStorage.setItem('day', day);
-    output = '';
-    canvasVisible = false;
+    clearOutput();
   };
 
   const loadButton = (text, onclick) =>
