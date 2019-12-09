@@ -27,8 +27,7 @@ export default {
       const layers = toLayers(parseInput());
       canvas.width = layers[0][0].length;
       canvas.height = layers[0].length;
-      canvas.style.transform = 'scale(4, 4)';
-      canvas.style.border = '1px solid black';
+      canvas.style.zoom = '400%';
 
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);

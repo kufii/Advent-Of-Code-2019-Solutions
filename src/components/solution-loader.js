@@ -128,7 +128,14 @@ export default () => {
           `,
           loading ? 'Loading...' : output
         ),
-        m('canvas#canvas', { hidden: !canvasVisible })
+        m(
+          'canvas#canvas' +
+            z`
+            border 1 solid black
+            image-rendering pixelated
+          `,
+          { hidden: !canvasVisible }
+        )
       ])
   };
 };
