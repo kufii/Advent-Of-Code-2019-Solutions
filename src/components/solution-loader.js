@@ -125,6 +125,7 @@ export default () => {
             line-height 1em;
             padding 5px;
             overflow visible;
+            mb 0
           `,
           loading ? 'Loading...' : output
         ),

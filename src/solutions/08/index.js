@@ -22,7 +22,7 @@ export default {
     return 'Result for layer with fewest 0s: ' + getNumDigits(layer, 1) * getNumDigits(layer, 2);
   },
   part2: () => ({
-    message: 'Password: ',
+    message: 'Password:',
     canvasRender(canvas) {
       const layers = toLayers(parseInput());
       canvas.width = layers[0][0].length;
