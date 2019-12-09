@@ -1,5 +1,6 @@
 import input from './input';
 import dedent from 'dedent';
+import intcode from '../intcode';
 
 const parseInput = () => input.split(',').map(Number);
 
@@ -7,14 +8,7 @@ const run = (noun, verb) => {
   const ints = parseInput();
   ints[1] = noun;
   ints[2] = verb;
-  let pos = 0;
-  while (ints[pos] !== 99) {
-    const [op, num1Pos, num2Pos, outputPos] = ints.slice(pos, pos + 4);
-    const num1 = ints[num1Pos];
-    const num2 = ints[num2Pos];
-    ints[outputPos] = op === 1 ? num1 + num2 : num1 * num2;
-    pos += 4;
-  }
+  Array.from(intcode(ints));
   return ints[0];
 };
 
