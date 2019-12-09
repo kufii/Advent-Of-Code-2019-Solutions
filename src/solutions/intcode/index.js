@@ -3,9 +3,11 @@ const expandMemory = (nums, pos) =>
 
 const getAtAddress = (nums, pos) => (expandMemory(nums, pos), nums[pos]);
 
-const setAtAddress = (nums, base, mode, pos, value) => (
-  expandMemory(nums, pos), (nums[mode === 2 ? pos + base : pos] = value)
-);
+const setAtAddress = (nums, base, mode, pos, value) => {
+  pos = mode === 2 ? pos + base : pos;
+  expandMemory(nums, pos);
+  nums[pos] = value;
+};
 
 const getNum = (nums, base, mode, num) =>
   mode === 1 ? num : getAtAddress(nums, num + (mode === 2 ? base : 0));
