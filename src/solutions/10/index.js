@@ -59,7 +59,7 @@ export default {
 
       if (!visualize) {
         target = canSeeSorted()[199];
-        return yield `${output()}`;
+        return yield output();
       }
 
       let count = 0;
