@@ -109,7 +109,7 @@ export default () => {
               selected: day,
               onselect: changeDay
             }),
-            m('div', { hidden: !solutions[day] && solutions[day].visualize }, [
+            m('div', { hidden: !solutions[day] || !solutions[day].visualize }, [
               m('label.pure-checkbox', [
                 'Visualize ',
                 m('input[type=checkbox]', {
