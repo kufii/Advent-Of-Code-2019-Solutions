@@ -72,3 +72,31 @@ export const chunk = (arr, size = 1) => {
   }
   return chunks;
 };
+
+export const gcd = (x, y) => {
+  x = Math.abs(x);
+  y = Math.abs(y);
+  while (y) {
+    const t = y;
+    y = x % y;
+    x = t;
+  }
+  return x;
+};
+
+export const sortBy = (...cbs) => (a, b) => {
+  for (const cb of cbs) {
+    const aa = cb(a);
+    const bb = cb(b);
+    const diff = cb.desc
+      ? isString(aa)
+        ? bb.localeCompare(aa)
+        : bb - aa
+      : isString(aa)
+      ? aa.localeCompare(bb)
+      : aa - bb;
+    if (diff !== 0) return diff;
+  }
+  return 0;
+};
+export const desc = cb => ((cb.desc = true), cb);

@@ -6,6 +6,7 @@ import { isGenerator } from '../types';
 
 export default () => {
   let day = localStorage.getItem('day') || 0;
+  let visualize = true;
   let loading = false;
   let output = '';
   let canvasVisible = false;
@@ -54,7 +55,7 @@ export default () => {
     m.redraw();
     setTimeout(() => {
       try {
-        Promise.resolve(fn())
+        Promise.resolve(fn(visualize))
           .then(data => {
             loading = false;
             if (isGenerator(data)) {
@@ -108,6 +109,15 @@ export default () => {
               selected: day,
               onselect: changeDay
             }),
+            m('div', { hidden: !solutions[day].visualize }, [
+              m('label.pure-checkbox', [
+                'Visualize ',
+                m('input[type=checkbox]', {
+                  oninput: ({ target: t }) => (visualize = t.checked),
+                  checked: visualize
+                })
+              ])
+            ]),
             m('div', [
               loadButton('Part 1', () => load(solutions[day].part1)),
               loadButton('Part 2', () => load(solutions[day].part2))
