@@ -1,5 +1,6 @@
 import input from './input';
-import { gcd, maxBy, sortBy } from '../../util';
+import { gcd, maxBy, sortBy, output2dArray } from '../../util';
+import dedent from 'dedent';
 
 const parseInput = () => input.split('\n').map(line => [...line]);
 
@@ -47,14 +48,37 @@ export default {
   },
   part2: visualize =>
     function*() {
+      let target;
       const map = parseInput();
-      const asteroids = getAsteroids(map);
-      const { asteroid, canSee } = getBestLocation(map, asteroids);
-      const sorted = canSee.sort(sortBy(a => getAngle(asteroid, a)));
-      const target = sorted[199];
-      if (!visualize)
-        yield `${target.x},${target.y} is the 200th to be vaporized: ` +
-          (target.x * 100 + target.y);
+      let asteroids = getAsteroids(map);
+      let { asteroid, canSee } = getBestLocation(map, asteroids);
+
+      const sort = seen => seen.sort(sortBy(a => getAngle(asteroid, a)));
+      const output = () =>
+        `${target.x},${target.y} is the 200th to be vaporized: ${target.x * 100 + target.y}`;
+
+      if (!visualize) {
+        target = sort(canSee)[199];
+        return yield `${output()}`;
+      }
+
+      let count = 0;
+      while (asteroids.length > 1) {
+        canSee = getAsteroidsWithLineOfSight(map, asteroids, asteroid);
+        const sorted = sort(canSee);
+        for (const a of sorted) {
+          yield output2dArray(map);
+          count++;
+          target = count === 200 ? a : target;
+          map[a.y][a.x] = count === 200 ? 'X' : '.';
+        }
+        asteroids = getAsteroids(map);
+      }
+      yield dedent`
+        ${output()}
+        ${output2dArray(map)}
+      `;
     },
-  visualize: true
+  visualize: true,
+  interval: 20
 };
