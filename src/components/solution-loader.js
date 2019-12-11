@@ -132,9 +132,8 @@ export default () => {
         m(
           'pre' +
             z`
-            line-height 1em;
-            padding 5px;
-            overflow-x auto;
+            line-height 1em
+            overflow-x auto
             mb 0
           `,
           loading ? 'Loading...' : output
