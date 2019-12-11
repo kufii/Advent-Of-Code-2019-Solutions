@@ -19,7 +19,7 @@ export const output2dArray = arr => arr.map(line => line.join('')).join('\n');
 
 export const fastMax = arr => arr.reduce((max, v) => (max >= v ? max : v), -Infinity);
 
-export const fastMin = arr => arr.reduce((max, v) => (max <= v ? max : v), Infinity);
+export const fastMin = arr => arr.reduce((min, v) => (min <= v ? min : v), Infinity);
 
 export class InfiniteGrid {
   constructor(fill) {
