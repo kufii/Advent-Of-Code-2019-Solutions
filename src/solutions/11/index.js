@@ -28,22 +28,21 @@ const run = function*(start, visualize) {
 
   const program = intcode(parseInput());
   let value, done;
-  let instruction = [];
+  let instructions = 0;
   while (!done) {
     ({ value, done } = program.next(COLORS[grid.get(pos.x, pos.y)]));
     if (value == null) continue;
-    instruction.push(value);
-    if (instruction.length === 1) {
+
+    instructions++;
+    if (instructions === 1) {
       grid.set(pos.x, pos.y, COLORS[value]);
-      if (visualize) {
-        yield grid;
-      }
-    } else if (instruction.length === 2) {
+      if (visualize) yield grid;
+    } else {
       dir = TURN[dir][value];
       const { x, y } = DIRS[dir];
       pos.x += x;
       pos.y += y;
-      instruction = [];
+      instructions = 0;
     }
   }
   yield grid;
