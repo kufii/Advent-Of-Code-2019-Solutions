@@ -53,27 +53,27 @@ export default {
       let asteroids = getAsteroids(map);
       let { asteroid, canSee } = getBestLocation(map, asteroids);
 
-      const sort = seen => seen.sort(sortBy(a => getAngle(asteroid, a)));
+      const canSeeSorted = () => canSee.sort(sortBy(a => getAngle(asteroid, a)));
       const output = () =>
         `${target.x},${target.y} is the 200th to be vaporized: ${target.x * 100 + target.y}`;
 
       if (!visualize) {
-        target = sort(canSee)[199];
-        return yield `${output()}`;
+        target = canSeeSorted()[199];
+        return yield output();
       }
 
       let count = 0;
-      while (asteroids.length > 1) {
-        canSee = getAsteroidsWithLineOfSight(map, asteroids, asteroid);
-        const sorted = sort(canSee);
-        for (const a of sorted) {
+      while (canSee.length) {
+        for (const a of canSeeSorted()) {
           yield output2dArray(map);
           count++;
           target = count === 200 ? a : target;
           map[a.y][a.x] = count === 200 ? 'X' : '.';
         }
         asteroids = getAsteroids(map);
+        canSee = getAsteroidsWithLineOfSight(map, asteroids, asteroid);
       }
+
       yield dedent`
         ${output()}
         ${output2dArray(map)}
