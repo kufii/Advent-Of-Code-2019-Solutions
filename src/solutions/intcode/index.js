@@ -104,7 +104,7 @@ export default function*(program, ...input) {
     const params = program.slice(pos + 1, pos + 1 + OPS[op].params);
     if (OPS[op].input) {
       const inp = yield;
-      if (inp) input = Array.isArray(inp) ? inp : [inp];
+      if (inp != null) input = Array.isArray(inp) ? inp : [inp];
     }
     const result = OPS[op].fn(program, base, modes, ...params, input);
     if (OPS[op].output) yield result;
