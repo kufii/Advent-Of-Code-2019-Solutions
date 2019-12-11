@@ -11,8 +11,8 @@ const getThrusterSignal = (program, sequence) => {
 };
 
 const getThrusterFeedback = (program, sequence) => {
-  const amplifiers = sequence.map(n => intcode(program.slice(), n, 0));
-  let result = 0;
+  const amplifiers = sequence.map((n, i) => intcode(program.slice(), n, ...(i === 0 ? [0] : [])));
+  let result;
   let i = 0;
   let value, done;
 
