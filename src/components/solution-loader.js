@@ -96,7 +96,7 @@ export default () => {
 
   return {
     view: () =>
-      m('div' + z`text-align center; p 1em`, [
+      m('div' + z`text-align center`, [
         m(
           'form.pure-form',
           m('fieldset', [
@@ -134,6 +134,7 @@ export default () => {
             z`
             line-height 1em
             overflow-x auto
+            padding 5
             mb 0
           `,
           loading ? 'Loading...' : output

@@ -123,16 +123,9 @@ export const chunk = (arr, size = 1) => {
   return chunks;
 };
 
-export const gcd = (x, y) => {
-  x = Math.abs(x);
-  y = Math.abs(y);
-  while (y) {
-    const t = y;
-    y = x % y;
-    x = t;
-  }
-  return x;
-};
+export const gcd = (a, b) => (a ? gcd(b % a, a) : b);
+
+export const lcm = (a, b) => (a * b) / gcd(a, b);
 
 export const sortBy = (...cbs) => (a, b) => {
   for (const cb of cbs) {
