@@ -13,10 +13,14 @@ const CELLS = {
 };
 
 export default {
-  part1() {
+  part1(visualize) {
     const grid = new InfiniteGrid(0);
-    chunk([...intcode(parseInput())], 3).map(([x, y, tile]) => grid.set(x, y, tile));
-    return '# of blocks: ' + grid.cells.filter(c => c.value === 2).length;
+    chunk([...intcode(parseInput())], 3).map(([x, y, tile]) => grid.set(x, y, CELLS[tile]));
+    return (
+      '# of blocks: ' +
+      grid.cells.filter(c => c.value === CELLS[2]).length +
+      (visualize ? '\n\n' + output2dArray(grid.toArray()) : '')
+    );
   },
   part2: visualize =>
     function*() {
@@ -44,7 +48,7 @@ export default {
           instruction = [];
         }
       }
-      yield 'Score: ' + grid.get(0, -1) + (visualize ? '\n' + output2dArray(grid.toArray()) : '');
+      yield 'Score: ' + grid.get(0, -1) + (visualize ? '\n\n' + output2dArray(grid.toArray()) : '');
     },
   visualize: true,
   interval: 10
