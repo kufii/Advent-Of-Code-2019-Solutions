@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'Mononoki';
+  src: url('mononoki-Regular.eot');
+  src: url('mononoki-Regular.woff2') format('woff2'), url('mononoki-Regular.woff') format('woff'),
+    url('mononoki-Regular.ttf') format('truetype');
+}
