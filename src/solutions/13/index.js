@@ -8,7 +8,7 @@ const CELLS = {
   0: ' ',
   1: '█',
   2: '#',
-  3: '-',
+  3: '—',
   4: '●'
 };
 
@@ -36,15 +36,15 @@ export default {
         instruction.push(value);
         if (instruction.length === 3) {
           const [x, y, tile] = instruction;
-          grid.set(x, y, CELLS[tile] || tile);
-          if (visualize) yield output2dArray(grid.toArray());
           if (tile === 3) paddleX = x;
           if (tile === 4) ballX = x;
+          x === -1 ? grid.set(0, -1, tile) : grid.set(x, y, CELLS[tile]);
+          if (visualize) yield output2dArray(grid.toArray());
           input = paddleX < ballX ? 1 : paddleX > ballX ? -1 : 0;
           instruction = [];
         }
       }
-      yield 'Score: ' + grid.get(-1, 0) + (visualize ? output2dArray(grid.toArray()) : '');
+      yield 'Score: ' + grid.get(0, -1) + (visualize ? output2dArray(grid.toArray()) : '');
     },
   visualize: true,
   interval: 10
