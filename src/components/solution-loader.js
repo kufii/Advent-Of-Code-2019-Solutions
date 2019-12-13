@@ -137,6 +137,7 @@ export default () => {
             overflow-x auto
             padding 5
             mb 0
+            font-size 1em
           `,
           loading ? 'Loading...' : output
         ),
