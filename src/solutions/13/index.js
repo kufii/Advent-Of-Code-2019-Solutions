@@ -44,7 +44,7 @@ export default {
           instruction = [];
         }
       }
-      yield 'Score: ' + grid.get(0, -1) + (visualize ? output2dArray(grid.toArray()) : '');
+      yield 'Score: ' + grid.get(0, -1) + (visualize ? '\n' + output2dArray(grid.toArray()) : '');
     },
   visualize: true,
   interval: 10
