@@ -132,7 +132,7 @@ export default () => {
         m(
           'pre' +
             z`
-            ff 'Consolas', 'Courier New', monospace
+            ff 'Consolas', 'PT Mono', monospace, monospace
             line-height 1em
             overflow-x auto
             padding 5

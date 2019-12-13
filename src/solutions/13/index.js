@@ -36,14 +36,16 @@ export default {
       let instruction = [];
       while (!done) {
         ({ value, done } = program.next(input));
-        if (value == null) continue;
+        if (value == null) {
+          if (visualize) yield output2dArray(grid.toArray());
+          continue;
+        }
         instruction.push(value);
         if (instruction.length === 3) {
           const [x, y, tile] = instruction;
           if (tile === 3) paddleX = x;
           if (tile === 4) ballX = x;
           x === -1 ? grid.set(0, -1, tile) : grid.set(x, y, CELLS[tile]);
-          if (visualize) yield output2dArray(grid.toArray());
           input = paddleX < ballX ? 1 : paddleX > ballX ? -1 : 0;
           instruction = [];
         }
@@ -51,5 +53,5 @@ export default {
       yield 'Score: ' + grid.get(0, -1) + (visualize ? '\n\n' + output2dArray(grid.toArray()) : '');
     },
   visualize: true,
-  interval: 10
+  interval: 40
 };
