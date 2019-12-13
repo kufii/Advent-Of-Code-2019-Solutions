@@ -132,7 +132,7 @@ export default () => {
         m(
           'pre' +
             z`
-            ff 'Source Code Pro', monospace
+            ff 'Consolas', 'Courier New', monospace
             line-height 1em
             overflow-x auto
             padding 5
