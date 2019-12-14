@@ -11,5 +11,21 @@ import day10 from './10';
 import day11 from './11';
 import day12 from './12';
 import day13 from './13';
+import day14 from './14';
 
-export default [day1, day2, day3, day4, day5, day6, day7, day8, day9, day10, day11, day12, day13];
+export default [
+  day1,
+  day2,
+  day3,
+  day4,
+  day5,
+  day6,
+  day7,
+  day8,
+  day9,
+  day10,
+  day11,
+  day12,
+  day13,
+  day14
+];
