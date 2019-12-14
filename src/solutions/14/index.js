@@ -38,9 +38,7 @@ const getOreRequirements = (recipes, chemical, quantity, leftovers = {}) => {
 };
 
 export default {
-  part1() {
-    return getOreRequirements(parseInput(), 'FUEL', 1);
-  },
+  part1: () => 'ORE required for 1 FUEL: ' + getOreRequirements(parseInput(), 'FUEL', 1),
   part2() {
     const trillion = 1000000000000;
     let i = 0;
@@ -57,6 +55,6 @@ export default {
       run(step);
       step /= 10;
     } while (step >= 1);
-    return i;
+    return `# of FUEL ${trillion} ORE can produce: ${i}`;
   }
 };
