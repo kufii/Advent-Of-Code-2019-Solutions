@@ -82,12 +82,14 @@ export default {
         if (visualize) yield output2dArray(step.toArray());
         grid = step;
       }
+
       const graph = getGraph(grid);
       const source = key(0, 0);
       const dest = grid.cells
         .filter(({ value }) => value === BLOCKS[2])
         .map(({ x, y }) => key(x, y))[0];
       const [distances, prev] = dijkstra(graph, source);
+
       if (visualize) {
         grid.set(0, 0, 'D');
         let current;
@@ -97,6 +99,7 @@ export default {
           grid.set(x, y, `<span style="color: red; font-weight: bold">${grid.get(x, y)}</span>`);
         } while (current !== source);
       }
+
       yield 'Distance to oxygen system: ' +
         distances.get(dest) +
         (visualize ? '\n' + output2dArray(grid.toArray()) : '');
