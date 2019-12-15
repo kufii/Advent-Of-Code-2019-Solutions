@@ -92,8 +92,8 @@ export const maxBy = cb => (a, b) => (cb(b) > cb(a) ? b : a);
 
 export const minBy = cb => (a, b) => (cb(b) < cb(a) ? b : a);
 
-export const dijkstra = (graph, source) => {
-  const nodes = new Set(Object.keys(graph));
+export const dijkstra = (graph, source, cbNodes, cbNeighbors) => {
+  const nodes = new Set(cbNodes ? cbNodes(graph) : Object.keys(graph));
   const dist = new Map();
   const prev = new Map();
 
@@ -103,7 +103,7 @@ export const dijkstra = (graph, source) => {
   while (nodes.size) {
     const closest = [...nodes].reduce(minBy(n => dist.get(n)));
     nodes.delete(closest);
-    graph[closest].forEach(neighbor => {
+    (cbNeighbors ? cbNeighbors(graph, closest) : graph[closest]).forEach(neighbor => {
       const alt = dist.get(closest) + 1;
       if (alt < dist.get(neighbor)) {
         dist.set(neighbor, alt);
@@ -113,6 +113,16 @@ export const dijkstra = (graph, source) => {
   }
 
   return [dist, prev];
+};
+
+export const toPath = (prev, source, dest) => {
+  const path = [];
+  let current;
+  do {
+    current = current ? prev.get(current) : dest;
+    path.push(current);
+  } while (current !== source);
+  return path.reverse();
 };
 
 export const chunk = (arr, size = 1) => {

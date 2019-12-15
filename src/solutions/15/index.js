@@ -1,6 +1,6 @@
 import input from './input';
 import intcode from '../intcode';
-import { InfiniteGrid, output2dArray, dijkstra } from '../../util';
+import { InfiniteGrid, output2dArray, dijkstra, toPath } from '../../util';
 
 const parseInput = () => input.split(',').map(Number);
 
@@ -12,7 +12,7 @@ const DIRS = {
 };
 
 const BLOCKS = {
-  0: '#',
+  0: '█',
   1: '.',
   2: '*'
 };
@@ -34,7 +34,7 @@ const drawGrid = function*() {
   const grid = new InfiniteGrid(' ');
   const pos = { x: 0, y: 0 };
   const steps = [];
-  grid.set(0, 0, '.');
+  grid.set(0, 0, 'D');
   while (true) {
     const dir = Object.values(DIRS).find(d => grid.get(pos.x + d.x, pos.y + d.y) === ' ');
     if (dir) {
@@ -56,24 +56,6 @@ const drawGrid = function*() {
   }
 };
 
-const getGraph = grid =>
-  grid.cells
-    .filter(({ value }) => value !== BLOCKS[0])
-    .reduce(
-      (acc, { x, y }) => ({
-        ...acc,
-        [key(x, y)]: [
-          { x, y: y - 1 },
-          { x, y: y + 1 },
-          { x: x - 1, y },
-          { x: x + 1, y }
-        ]
-          .filter(({ x, y }) => [BLOCKS[1], BLOCKS[2]].includes(grid.get(x, y)))
-          .map(({ x, y }) => key(x, y))
-      }),
-      {}
-    );
-
 export default {
   part1: visualize =>
     function*() {
@@ -83,21 +65,40 @@ export default {
         grid = step;
       }
 
-      const graph = getGraph(grid);
       const source = key(0, 0);
       const dest = grid.cells
         .filter(({ value }) => value === BLOCKS[2])
         .map(({ x, y }) => key(x, y))[0];
-      const [distances, prev] = dijkstra(graph, source);
+
+      const [distances, prev] = dijkstra(
+        grid,
+        source,
+        grid => grid.cells.filter(({ value }) => value !== BLOCKS[0]).map(({ x, y }) => key(x, y)),
+        (grid, node) => {
+          const { x, y } = unKey(node);
+          return [
+            { x, y: y - 1 },
+            { x, y: y + 1 },
+            { x: x - 1, y },
+            { x: x + 1, y }
+          ]
+            .filter(({ x, y }) => grid.get(x, y) !== BLOCKS[0])
+            .map(({ x, y }) => key(x, y));
+        }
+      );
 
       if (visualize) {
-        grid.set(0, 0, 'D');
-        let current;
-        do {
-          current = current ? prev.get(current) : dest;
-          const { x, y } = unKey(current);
-          grid.set(x, y, `<span style="color: red; font-weight: bold">${grid.get(x, y)}</span>`);
-        } while (current !== source);
+        for (const node of toPath(prev, source, dest)) {
+          const { x, y } = unKey(node);
+          grid.set(
+            x,
+            y,
+            `<span style="color: red; font-weight: bold">${
+              grid.get(x, y) === BLOCKS[1] ? '•' : grid.get(x, y)
+            }</span>`
+          );
+          yield output2dArray(grid.toArray());
+        }
       }
 
       yield 'Distance to oxygen system: ' +
