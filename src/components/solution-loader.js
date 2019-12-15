@@ -139,7 +139,7 @@ export default () => {
             mb 0
             font-size 1em
           `,
-          loading ? 'Loading...' : output
+          loading ? 'Loading...' : solutions[day].html ? m.trust(output) : output
         ),
         m(
           'canvas#canvas' +
