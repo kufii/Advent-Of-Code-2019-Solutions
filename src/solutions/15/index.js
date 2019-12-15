@@ -17,9 +17,16 @@ const BLOCKS = {
   2: '*'
 };
 
-const key = (x, y) => `${x},${y}`;
+const key = ({ x, y }) => `${x},${y}`;
 
 const unKey = key => [key.split(',').map(Number)].map(([x, y]) => ({ x, y }))[0];
+
+const neighbors = ({ x, y }) => [
+  { x, y: y - 1 },
+  { x, y: y + 1 },
+  { x: x - 1, y },
+  { x: x + 1, y }
+];
 
 const move = (program, direction) => {
   let value;
@@ -34,7 +41,6 @@ const drawGrid = function*() {
   const grid = new InfiniteGrid(' ');
   const pos = { x: 0, y: 0 };
   const steps = [];
-  grid.set(0, 0, 'D');
   while (true) {
     const dir = Object.values(DIRS).find(d => grid.get(pos.x + d.x, pos.y + d.y) === ' ');
     if (dir) {
@@ -56,6 +62,8 @@ const drawGrid = function*() {
   }
 };
 
+const getOxygenSystemLocation = grid => grid.cells.find(({ value }) => value === BLOCKS[2]);
+
 export default {
   part1: visualize =>
     function*() {
@@ -65,29 +73,21 @@ export default {
         grid = step;
       }
 
-      const source = key(0, 0);
-      const dest = grid.cells
-        .filter(({ value }) => value === BLOCKS[2])
-        .map(({ x, y }) => key(x, y))[0];
+      const source = key({ x: 0, y: 0 });
+      const dest = key(getOxygenSystemLocation(grid));
 
       const [distances, prev] = dijkstra(
         grid,
         source,
-        grid => grid.cells.filter(({ value }) => value !== BLOCKS[0]).map(({ x, y }) => key(x, y)),
-        (grid, node) => {
-          const { x, y } = unKey(node);
-          return [
-            { x, y: y - 1 },
-            { x, y: y + 1 },
-            { x: x - 1, y },
-            { x: x + 1, y }
-          ]
+        grid => grid.cells.filter(({ value }) => value !== BLOCKS[0]).map(key),
+        (grid, node) =>
+          neighbors(unKey(node))
             .filter(({ x, y }) => grid.get(x, y) !== BLOCKS[0])
-            .map(({ x, y }) => key(x, y));
-        }
+            .map(key)
       );
 
       if (visualize) {
+        grid.set(0, 0, 'D');
         for (const node of toPath(prev, source, dest)) {
           const { x, y } = unKey(node);
           grid.set(
@@ -104,6 +104,37 @@ export default {
       yield 'Distance to oxygen system: ' +
         distances.get(dest) +
         (visualize ? '\n' + output2dArray(grid.toArray()) : '');
+    },
+  part2: visualize =>
+    function*() {
+      let grid;
+      for (const step of drawGrid()) {
+        if (visualize) yield output2dArray(step.toArray());
+        grid = step;
+      }
+
+      const oxygenSystem = getOxygenSystemLocation(grid);
+      const oxygen = new Set([key(oxygenSystem)]);
+      const drawOxygen = (x, y) =>
+        grid.set(x, y, grid.get(x, y) === BLOCKS[1] ? '•' : grid.get(x, y));
+      drawOxygen(oxygenSystem.x, oxygenSystem.y);
+
+      let time = -1;
+      const output = () =>
+        'Time: ' + time + (visualize ? '\n' + output2dArray(grid.toArray()) : '');
+
+      while (oxygen.size) {
+        for (const node of [...oxygen.keys()]) {
+          neighbors(unKey(node))
+            .filter(({ x, y }) => grid.get(x, y) === BLOCKS[1])
+            .forEach(({ x, y }) => (drawOxygen(x, y), oxygen.add(key({ x, y }))));
+          oxygen.delete(node);
+        }
+        time++;
+        if (visualize) yield output();
+      }
+
+      yield output();
     },
   visualize: true,
   html: true
