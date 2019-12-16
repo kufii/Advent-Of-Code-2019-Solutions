@@ -119,11 +119,12 @@ export default {
         grid.set(x, y, grid.get(x, y) === BLOCKS[1] ? '•' : grid.get(x, y));
       drawOxygen(oxygenSystem.x, oxygenSystem.y);
 
-      let time = -1;
+      let time = 0;
       const output = () =>
         'Time: ' + time + (visualize ? '\n' + output2dArray(grid.toArray()) : '');
 
       while (oxygen.size) {
+        if (visualize) yield output();
         for (const node of [...oxygen.keys()]) {
           neighbors(unKey(node))
             .filter(({ x, y }) => grid.get(x, y) === BLOCKS[1])
@@ -131,8 +132,8 @@ export default {
           oxygen.delete(node);
         }
         time++;
-        if (visualize) yield output();
       }
+      time--;
 
       yield output();
     },
