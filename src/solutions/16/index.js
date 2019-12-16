@@ -32,6 +32,6 @@ export default {
     const offset = Number(nums.slice(0, 7).join(''));
     nums = nums.slice(offset);
     nTimes(100, () => (nums = phaseLastHalf(nums)));
-    return 'First 8 digits after 100 phases: ' + nums.slice(0, 8).join('');
+    return 'Embedded message: ' + nums.slice(0, 8).join('');
   }
 };
