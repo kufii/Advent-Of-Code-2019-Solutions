@@ -112,3 +112,5 @@ export default function*(program, ...input) {
     pos = OPS[op].flow && result != null ? result : pos + 1 + OPS[op].params;
   }
 }
+
+export const parse = str => str.split(',').map(Number);
