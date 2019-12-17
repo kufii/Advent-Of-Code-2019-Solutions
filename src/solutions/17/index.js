@@ -139,6 +139,7 @@ export default {
       const program = parse(input);
       program[0] = 2;
       const dustCollected = [...intcode(program, ...inputData)].pop();
+
       yield dedent`
         Dust: ${dustCollected}
 
