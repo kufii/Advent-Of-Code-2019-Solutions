@@ -127,9 +127,9 @@ export default {
         if (move) moves.push(move);
         if (visualize)
           yield dedent`
-          ${moves.join(',')}
-          ${output2dArray(grid)}
-        `;
+            ${moves.join(',')}
+            ${output2dArray(grid)}
+          `;
       }
 
       const { compressed, matches } = compress(moves.join(','));
