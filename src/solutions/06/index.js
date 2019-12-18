@@ -30,5 +30,5 @@ export default {
   },
   part2: () =>
     '# of orbital transfers to get to the object SAN is orbiting: ' +
-    (dijkstra(getGraph(parseInput()), 'YOU')[0].get('SAN') - 2)
+    (dijkstra(getGraph(parseInput()), 'YOU', 'SAN')[0] - 2)
 };

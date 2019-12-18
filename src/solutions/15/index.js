@@ -1,6 +1,6 @@
 import input from './input';
 import intcode from '../intcode';
-import { InfiniteGrid, output2dArray, dijkstra, toPath } from '../../util';
+import { InfiniteGrid, output2dArray, dijkstra } from '../../util';
 
 const parseInput = () => input.split(',').map(Number);
 
@@ -76,19 +76,15 @@ export default {
       const source = key({ x: 0, y: 0 });
       const dest = key(getOxygenSystemLocation(grid));
 
-      const [distances, prev] = dijkstra(
-        grid,
-        source,
-        grid => grid.cells.filter(({ value }) => value !== BLOCKS[0]).map(key),
-        (grid, node) =>
-          neighbors(unKey(node))
-            .filter(({ x, y }) => grid.get(x, y) !== BLOCKS[0])
-            .map(key)
+      const [distance, path] = dijkstra(grid, source, dest, (grid, node) =>
+        neighbors(unKey(node))
+          .filter(({ x, y }) => grid.get(x, y) !== BLOCKS[0])
+          .map(key)
       );
 
       if (visualize) {
         grid.set(0, 0, 'D');
-        for (const node of toPath(prev, source, dest)) {
+        for (const node of path) {
           const { x, y } = unKey(node);
           grid.set(
             x,
@@ -102,7 +98,7 @@ export default {
       }
 
       yield 'Distance to oxygen system: ' +
-        distances.get(dest) +
+        distance +
         (visualize ? '\n' + output2dArray(grid.toArray()) : '');
     },
   part2: visualize =>

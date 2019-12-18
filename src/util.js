@@ -92,20 +92,29 @@ export const maxBy = cb => (a, b) => (cb(b) > cb(a) ? b : a);
 
 export const minBy = cb => (a, b) => (cb(b) < cb(a) ? b : a);
 
-export const dijkstra = (graph, source, cbNodes, cbNeighbors) => {
-  const nodes = new Set(cbNodes ? cbNodes(graph) : Object.keys(graph));
+export const dijkstra = (graph, source, dest, cbNeighbors) => {
+  const allKeys = new Set([source]);
+  const nodes = new Set([source]);
   const dist = new Map();
   const prev = new Map();
 
-  [...nodes].forEach(node => dist.set(node, Infinity));
+  const getDist = key => (dist.has(key) ? dist.get(key) : Infinity);
   dist.set(source, 0);
 
   while (nodes.size) {
-    const closest = [...nodes].reduce(minBy(n => dist.get(n)));
+    const closest = [...nodes].reduce(minBy(n => getDist(n)));
+    if (dest && closest === dest) {
+      return [dist.get(dest), toPath(prev, source, dest)];
+    }
     nodes.delete(closest);
-    (cbNeighbors ? cbNeighbors(graph, closest) : graph[closest]).forEach(neighbor => {
-      const alt = dist.get(closest) + 1;
-      if (alt < dist.get(neighbor)) {
+    const neighbors = cbNeighbors ? cbNeighbors(graph, closest) : graph[closest];
+    neighbors.forEach(neighbor => {
+      if (!allKeys.has(neighbor)) {
+        allKeys.add(neighbor);
+        nodes.add(neighbor);
+      }
+      const alt = getDist(closest) + 1;
+      if (alt < getDist(neighbor)) {
         dist.set(neighbor, alt);
         prev.set(neighbor, closest);
       }
