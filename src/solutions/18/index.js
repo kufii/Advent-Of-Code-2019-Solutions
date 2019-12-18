@@ -28,10 +28,10 @@ const getNeighbors = (map, k) =>
     .filter(({ x, y }) => map[y][x] !== '#')
     .map(key);
 
-const getPath = (map, start) => {
+const getPath = (map, robots) => {
   const keyLocations = [
     ...[...getCells(map)].filter(({ value }) => value.match(/[a-z]/u)),
-    { x: start.x, y: start.y, value: 'start' }
+    ...robots.map(({ x, y }, i) => ({ x, y, value: 'start' + i }))
   ];
   const pathsBetween = keyLocations.reduce(
     (acc, { x, y, value }) => ({
@@ -51,17 +51,18 @@ const getPath = (map, start) => {
 
   const memo = {};
 
-  const recursive = (lastKey = 'start', distance = 0, keys = ['start']) => {
+  const recursive = (lastKeys, keys, distance = 0) => {
     const remainingKeys = Object.keys(pathsBetween).filter(k => !keys.includes(k));
     if (!remainingKeys.length) return [distance, keys];
 
-    const memoKey = `${lastKey}:${remainingKeys.sort().join(',')}`;
+    const memoKey = `${lastKeys.sort().join(',')}:${remainingKeys.sort().join(',')}`;
     if (memo[memoKey]) {
       const [memoDist, memoKeys] = memo[memoKey];
       return [distance + memoDist, [...keys, ...memoKeys]];
     }
 
     const canTraversePath = (start, end) =>
+      pathsBetween[start][end][1] &&
       !pathsBetween[start][end][1]
         .map(unKey)
         .some(
@@ -70,21 +71,29 @@ const getPath = (map, start) => {
             (map[y][x].match(/[A-Z]/u) && !keys.includes(map[y][x].toLowerCase()))
         );
 
-    const result = remainingKeys
-      .filter(value => canTraversePath(lastKey, value))
-      .map(value => {
-        const [dist] = pathsBetween[lastKey][value];
-        return recursive(value, distance + dist, [...keys, value]);
-      })
+    const result = robots
+      .flatMap((_, i) =>
+        remainingKeys
+          .filter(value => canTraversePath(lastKeys[i], value))
+          .map(value => {
+            const [dist] = pathsBetween[lastKeys[i]][value];
+            const nextKeys = lastKeys.slice();
+            nextKeys[i] = value;
+            return recursive(nextKeys, [...keys, value], distance + dist);
+          })
+      )
       .reduce(minBy(([dist]) => dist));
-    memo[memoKey] = [result[0] - distance, result[1].slice(result[1].indexOf(lastKey) + 1)];
+    memo[memoKey] = [result[0] - distance, result[1].slice(result[1].indexOf(lastKeys[0]) + 1)];
 
     return result;
   };
-  const [distance, keyPath] = recursive();
+  const startKeys = robots.map((_, i) => 'start' + i);
+  const [distance, keyPath] = recursive(startKeys, startKeys);
   const path = [];
-  for (let i = 1; i < keyPath.length; i++) {
-    path.push(...pathsBetween[keyPath[i - 1]][keyPath[i]][1].slice(1));
+  if (robots.length === 1) {
+    for (let i = 1; i < keyPath.length; i++) {
+      path.push(...pathsBetween[keyPath[i - 1]][keyPath[i]][1].slice(1));
+    }
   }
   return [distance, path];
 };
@@ -98,7 +107,7 @@ export default {
       const cells = [...getCells(map)];
       let { x, y } = cells.find(({ value }) => value === '@');
       map[y][x] = '.';
-      const [distance, path] = getPath(map, { x, y });
+      const [distance, path] = getPath(map, [{ x, y }]);
 
       const keys = [];
       const getVisualization = () =>
@@ -122,6 +131,23 @@ export default {
       }
 
       yield 'Distance of shortest path: ' + distance + getVisualization();
+    },
+  part2: () =>
+    function*() {
+      yield 'Loading... This takes a while...';
+
+      const map = parseInput();
+      const cells = [...getCells(map)];
+      const { x, y } = cells.find(({ value }) => value === '@');
+      [{ x, y }, ...neighbors({ x, y })].forEach(({ x, y }) => (map[y][x] = '#'));
+      const robots = [
+        { x: x - 1, y: y - 1 },
+        { x: x + 1, y: y - 1 },
+        { x: x - 1, y: y + 1 },
+        { x: x + 1, y: y + 1 }
+      ];
+
+      yield 'Distance of shortest path: ' + getPath(map, robots)[0];
     },
   visualize: true,
   interval: 30
