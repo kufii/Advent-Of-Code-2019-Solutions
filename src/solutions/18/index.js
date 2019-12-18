@@ -1,5 +1,6 @@
 import input from './input';
 import { dijkstra, output2dArray, minBy } from '../../util';
+import dedent from 'dedent';
 
 const parseInput = () => input.split('\n').map(line => [...line]);
 
@@ -28,7 +29,10 @@ const getNeighbors = (map, k) =>
     .map(key);
 
 const getPath = (map, start) => {
-  const keyLocations = [...getCells(map)].filter(({ value }) => value.match(/[a-z]/u));
+  const keyLocations = [
+    ...[...getCells(map)].filter(({ value }) => value.match(/[a-z]/u)),
+    { x: start.x, y: start.y, value: 'start' }
+  ];
   const pathsBetween = keyLocations.reduce(
     (acc, { x, y, value }) => ({
       ...acc,
@@ -42,10 +46,6 @@ const getPath = (map, start) => {
           {}
         )
     }),
-    {}
-  );
-  pathsBetween.start = keyLocations.reduce(
-    (acc, k) => ({ ...acc, [k.value]: dijkstra(map, key(start), key(k), getNeighbors) }),
     {}
   );
 
@@ -93,24 +93,36 @@ export default {
   part1: visualize =>
     function*() {
       yield 'Loading... This takes a while...';
+
       const map = parseInput();
       const cells = [...getCells(map)];
       let { x, y } = cells.find(({ value }) => value === '@');
       map[y][x] = '.';
       const [distance, path] = getPath(map, { x, y });
+
+      const keys = [];
+      const getVisualization = () =>
+        visualize
+          ? '\n\n' +
+            dedent`
+            Keys: ${keys.join(', ')}
+            ${output2dArray(map)}
+          `
+          : '';
+
       if (visualize) {
         for (const key of path) {
           ({ x, y } = unKey(key));
+          if (map[y][x].match(/[a-z]/u)) keys.push(map[y][x]);
           map[y][x] = '@';
-          yield output2dArray(map);
+          yield getVisualization().trim();
           map[y][x] = '.';
         }
         map[y][x] = '@';
       }
-      yield 'Distance of shortest path: ' +
-        distance +
-        (visualize ? '\n\n' + output2dArray(map) : '');
+
+      yield 'Distance of shortest path: ' + distance + getVisualization();
     },
   visualize: true,
-  interval: 50
+  interval: 30
 };
