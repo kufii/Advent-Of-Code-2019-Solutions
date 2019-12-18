@@ -1,8 +1,6 @@
 import input from './input';
-import intcode from '../intcode';
+import intcode, { parse } from '../intcode';
 import { range } from '../../util';
-
-const parseInput = () => input.split(',').map(Number);
 
 const getThrusterSignal = (program, sequence) => {
   let result = 0;
@@ -45,7 +43,7 @@ const getPermutations = array => {
 
 export default {
   part1() {
-    const program = parseInput();
+    const program = parse(input);
     const sequences = [...getPermutations(range(0, 4))];
     return (
       'Highest thruster signal: ' +
@@ -53,7 +51,7 @@ export default {
     );
   },
   part2() {
-    const program = parseInput();
+    const program = parse(input);
     const sequences = [...getPermutations(range(5, 9))];
     return (
       'Highest thruster signal with feedback: ' +

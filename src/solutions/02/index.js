@@ -1,11 +1,9 @@
 import input from './input';
 import dedent from 'dedent';
-import intcode from '../intcode';
-
-const parseInput = () => input.split(',').map(Number);
+import intcode, { parse } from '../intcode';
 
 const run = (noun, verb) => {
-  const ints = parseInput();
+  const ints = parse(input);
   ints[1] = noun;
   ints[2] = verb;
   Array.from(intcode(ints));

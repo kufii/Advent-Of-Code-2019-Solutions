@@ -1,8 +1,6 @@
 import input from './input';
-import intcode from '../intcode';
+import intcode, { parse } from '../intcode';
 import { InfiniteGrid, output2dArray } from '../../util';
-
-const parseInput = () => input.split(',').map(Number);
 
 const DIRS = {
   UP: { x: 0, y: -1 },
@@ -18,7 +16,7 @@ const TURN = {
   RIGHT: { 0: 'UP', 1: 'DOWN' }
 };
 
-const COLORS = { 0: '.', 1: '#', '#': 1, '.': 0 };
+const COLORS = { 0: '.', 1: '█', '█': 1, '.': 0 };
 
 const run = function*(start, visualize) {
   const pos = { x: 0, y: 0 };
@@ -26,7 +24,7 @@ const run = function*(start, visualize) {
   const grid = new InfiniteGrid('.');
   grid.set(0, 0, start);
 
-  const program = intcode(parseInput());
+  const program = intcode(parse(input));
   let value, done;
   let instructions = 0;
   while (!done) {
@@ -51,7 +49,7 @@ const run = function*(start, visualize) {
 export default {
   part1: visualize =>
     function*() {
-      for (const grid of run('.', visualize)) {
+      for (const grid of run(COLORS[0], visualize)) {
         yield '# of panels painted: ' +
           grid.cells.length +
           (visualize ? '\n' + output2dArray(grid.toArray()) : '');
@@ -59,7 +57,7 @@ export default {
     },
   part2: visualize =>
     function*() {
-      for (const grid of run('#', visualize)) {
+      for (const grid of run(COLORS[1], visualize)) {
         yield output2dArray(grid.toArray());
       }
     },

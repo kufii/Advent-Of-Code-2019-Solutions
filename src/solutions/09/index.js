@@ -1,9 +1,7 @@
 import input from './input';
-import intcode from '../intcode';
+import intcode, { parse } from '../intcode';
 
-const parseInput = () => input.split(',').map(Number);
-
-const run = mode => [...intcode(parseInput(), mode)].pop();
+const run = mode => [...intcode(parse(input), mode)].pop();
 
 export default {
   part1: () => 'BOOST keycode: ' + run(1),

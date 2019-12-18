@@ -1,8 +1,6 @@
 import input from './input';
-import intcode from '../intcode';
+import intcode, { parse } from '../intcode';
 import { chunk, InfiniteGrid, output2dArray } from '../../util';
-
-const parseInput = () => input.split(',').map(Number);
 
 const CELLS = {
   0: ' ',
@@ -15,7 +13,7 @@ const CELLS = {
 export default {
   part1(visualize) {
     const grid = new InfiniteGrid(0);
-    chunk([...intcode(parseInput())], 3).map(([x, y, tile]) => grid.set(x, y, CELLS[tile]));
+    chunk([...intcode(parse(input))], 3).map(([x, y, tile]) => grid.set(x, y, CELLS[tile]));
     return (
       '# of blocks: ' +
       grid.cells.filter(c => c.value === CELLS[2]).length +
@@ -25,17 +23,17 @@ export default {
   part2: visualize =>
     function*() {
       const grid = new InfiniteGrid(CELLS[0]);
-      const code = parseInput();
+      const code = parse(input);
       code[0] = 2;
 
-      let input = 0;
+      let inp = 0;
       let value, done;
       let paddleX;
       let ballX;
       const program = intcode(code);
       let instruction = [];
       while (!done) {
-        ({ value, done } = program.next(input));
+        ({ value, done } = program.next(inp));
         if (value == null) {
           if (visualize) yield output2dArray(grid.toArray());
           continue;
@@ -46,7 +44,7 @@ export default {
           if (tile === 3) paddleX = x;
           if (tile === 4) ballX = x;
           x === -1 ? grid.set(0, -1, tile) : grid.set(x, y, CELLS[tile]);
-          input = paddleX < ballX ? 1 : paddleX > ballX ? -1 : 0;
+          inp = paddleX < ballX ? 1 : paddleX > ballX ? -1 : 0;
           instruction = [];
         }
       }

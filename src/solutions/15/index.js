@@ -1,8 +1,6 @@
 import input from './input';
-import intcode from '../intcode';
+import intcode, { parse } from '../intcode';
 import { InfiniteGrid, output2dArray, dijkstra } from '../../util';
-
-const parseInput = () => input.split(',').map(Number);
 
 const DIRS = {
   NORTH: { code: 1, opposite: 'SOUTH', x: 0, y: -1 },
@@ -37,7 +35,7 @@ const move = (program, direction) => {
 };
 
 const drawGrid = function*() {
-  const program = intcode(parseInput());
+  const program = intcode(parse(input));
   const grid = new InfiniteGrid(' ');
   const pos = { x: 0, y: 0 };
   const steps = [];
