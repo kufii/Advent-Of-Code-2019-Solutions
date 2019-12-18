@@ -121,7 +121,7 @@ export const dijkstra = (graph, source, dest, cbNeighbors) => {
     });
   }
 
-  return [dist, prev];
+  return dest ? [] : [dist, prev];
 };
 
 export const toPath = (prev, source, dest) => {
