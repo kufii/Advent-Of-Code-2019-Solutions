@@ -16,6 +16,7 @@ import day15 from './15';
 import day16 from './16';
 import day17 from './17';
 import day18 from './18';
+import day19 from './19';
 
 export default [
   day1,
@@ -35,5 +36,6 @@ export default [
   day15,
   day16,
   day17,
-  day18
+  day18,
+  day19
 ];
