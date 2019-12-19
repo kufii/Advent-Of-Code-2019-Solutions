@@ -28,7 +28,7 @@ const getNeighbors = (map, k) =>
     .filter(({ x, y }) => map[y][x] !== '#')
     .map(key);
 
-const getPath = (map, robots) => {
+const getPath = function*(map, robots, yieldEvery = 1000) {
   const keyLocations = [
     ...[...getCells(map)].filter(({ value }) => value.match(/[a-z]/u)),
     ...robots.map(({ x, y }, i) => ({ x, y, value: 'start' + i }))
@@ -51,14 +51,14 @@ const getPath = (map, robots) => {
 
   const memo = {};
 
-  const recursive = (lastKeys, keys, distance = 0) => {
+  const recursive = function*(lastKeys, keys, distance = 0) {
     const remainingKeys = Object.keys(pathsBetween).filter(k => !keys.includes(k));
-    if (!remainingKeys.length) return [distance, keys];
+    if (!remainingKeys.length) return yield [distance, keys];
 
     const memoKey = `${lastKeys.sort().join(',')}:${remainingKeys.sort().join(',')}`;
     if (memo[memoKey]) {
       const [memoDist, memoKeys] = memo[memoKey];
-      return [distance + memoDist, [...keys, ...memoKeys]];
+      return yield [distance + memoDist, [...keys, ...memoKeys]];
     }
 
     const canTraversePath = (start, end) =>
@@ -71,27 +71,39 @@ const getPath = (map, robots) => {
             (map[y][x].match(/[A-Z]/u) && !keys.includes(map[y][x].toLowerCase()))
         );
 
-    const result = robots
-      .flatMap((_, i) =>
-        remainingKeys
-          .filter(value => canTraversePath(lastKeys[i], value))
-          .map(value => {
-            const [dist] = pathsBetween[lastKeys[i]][value];
-            const nextKeys = lastKeys.slice();
-            nextKeys[i] = value;
-            return recursive(nextKeys, [...keys, value], distance + dist);
-          })
-      )
-      .reduce(minBy(([dist]) => dist));
+    const results = [];
+    for (let i = 0; i < robots.length; i++) {
+      for (const value of remainingKeys.filter(value => canTraversePath(lastKeys[i], value))) {
+        const [dist] = pathsBetween[lastKeys[i]][value];
+        const nextKeys = lastKeys.slice();
+        nextKeys[i] = value;
+        let result;
+        for (const out of recursive(nextKeys, [...keys, value], distance + dist)) {
+          result = out;
+          yield;
+        }
+        results.push(result);
+      }
+    }
+
+    const result = results.reduce(minBy(([dist]) => dist));
     memo[memoKey] = [
       result[0] - distance,
       result[1].slice(Math.max(...lastKeys.map(key => result[1].indexOf(key))) + 1)
     ];
 
-    return result;
+    yield result;
   };
+
   const robotLocations = robots.map((_, i) => 'start' + i);
-  const [_, keyPath] = recursive(robotLocations, robotLocations);
+  let keyPath;
+  let i = 0;
+  for (const out of recursive(robotLocations, robotLocations)) {
+    i++;
+    if (i % yieldEvery === 0) yield;
+    keyPath = out && out[1];
+  }
+
   const path = [];
   for (const step of keyPath.slice(robots.length)) {
     const robot = robots.map((_, i) => i).find(i => pathsBetween[robotLocations[i]][step][1]);
@@ -103,7 +115,7 @@ const getPath = (map, robots) => {
     );
     robotLocations[robot] = step;
   }
-  return path;
+  yield path;
 };
 
 const output = function*(map, robots, path, visualize) {
@@ -138,7 +150,11 @@ export default {
       const map = parseInput();
       const cells = [...getCells(map)];
       const pos = cells.find(({ value }) => value === '@');
-      const path = getPath(map, [pos]);
+      let path;
+      for (const out of getPath(map, [pos])) {
+        yield 'Loading... This takes a while...';
+        path = out;
+      }
 
       for (const out of output(map, [pos], path, visualize)) {
         yield out;
@@ -159,7 +175,12 @@ export default {
         { x: x + 1, y: y + 1 }
       ];
       robots.forEach(({ x, y }) => (map[y][x] = '@'));
-      const path = getPath(map, robots);
+
+      let path;
+      for (const out of getPath(map, robots)) {
+        yield 'Loading... This takes a while...';
+        path = out;
+      }
 
       for (const out of output(map, robots, path, visualize)) {
         yield out;
