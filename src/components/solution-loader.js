@@ -133,7 +133,7 @@ export default () => {
           'pre' +
             z`
             ff 'Mononoki', monospace, monospace
-            line-height 1.1em
+            line-height 1.13em
             overflow-x auto
             padding 5
             mb 0
