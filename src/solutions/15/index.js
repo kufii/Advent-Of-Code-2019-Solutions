@@ -12,7 +12,8 @@ const DIRS = {
 const BLOCKS = {
   0: '█',
   1: '.',
-  2: '*'
+  2: '*',
+  3: '•'
 };
 
 const key = ({ x, y }) => `${x},${y}`;
@@ -88,7 +89,7 @@ export default {
             x,
             y,
             `<span style="color: red; font-weight: bold">${
-              grid.get(x, y) === BLOCKS[1] ? '•' : grid.get(x, y)
+              grid.get(x, y) === BLOCKS[1] ? BLOCKS[3] : grid.get(x, y)
             }</span>`
           );
           yield output2dArray(grid.toArray());
@@ -110,7 +111,7 @@ export default {
       const oxygenSystem = getOxygenSystemLocation(grid);
       const oxygen = new Set([key(oxygenSystem)]);
       const drawOxygen = (x, y) =>
-        grid.set(x, y, grid.get(x, y) === BLOCKS[1] ? '•' : grid.get(x, y));
+        grid.set(x, y, grid.get(x, y) === BLOCKS[1] ? BLOCKS[3] : grid.get(x, y));
       drawOxygen(oxygenSystem.x, oxygenSystem.y);
 
       let time = 0;

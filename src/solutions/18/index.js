@@ -2,7 +2,13 @@ import input from './input';
 import { dijkstra, output2dArray, minBy } from '../../util';
 import dedent from 'dedent';
 
-const parseInput = () => input.split('\n').map(line => [...line]);
+const MAP = {
+  '#': '█',
+  '.': ' ',
+  '@': '@'
+};
+
+const parseInput = () => input.split('\n').map(line => [...line].map(c => MAP[c] || c));
 
 const key = ({ x, y }) => `${x},${y}`;
 
@@ -25,7 +31,7 @@ const neighbors = ({ x, y }) => [
 
 const getNeighbors = (map, k) =>
   neighbors(unKey(k))
-    .filter(({ x, y }) => map[y][x] !== '#')
+    .filter(({ x, y }) => map[y][x] !== MAP['#'])
     .map(key);
 
 const getPath = function*(map, robots, yieldEvery = 1000) {
@@ -125,15 +131,16 @@ const output = function*(map, robots, path, visualize) {
       ? '\n\n' +
         dedent`
           Keys: ${keys.join(', ')}
+
           ${output2dArray(map)}
         `
       : '';
   if (visualize) {
     yield getVisualization().trim();
     for (const { x, y, robot } of path) {
-      map[robots[robot].y][robots[robot].x] = '.';
+      map[robots[robot].y][robots[robot].x] = MAP['.'];
       if (map[y][x].match(/[a-z]/u)) keys.push(map[y][x]);
-      map[y][x] = '@';
+      map[y][x] = MAP['@'];
       robots[robot].x = x;
       robots[robot].y = y;
       yield getVisualization().trim();
@@ -149,7 +156,7 @@ export default {
 
       const map = parseInput();
       const cells = [...getCells(map)];
-      const pos = cells.find(({ value }) => value === '@');
+      const pos = cells.find(({ value }) => value === MAP['@']);
       let path;
       for (const out of getPath(map, [pos])) {
         yield 'Loading... This takes a while...';
@@ -166,15 +173,15 @@ export default {
 
       const map = parseInput();
       const cells = [...getCells(map)];
-      const { x, y } = cells.find(({ value }) => value === '@');
-      [{ x, y }, ...neighbors({ x, y })].forEach(({ x, y }) => (map[y][x] = '#'));
+      const { x, y } = cells.find(({ value }) => value === MAP['@']);
+      [{ x, y }, ...neighbors({ x, y })].forEach(({ x, y }) => (map[y][x] = MAP['#']));
       const robots = [
         { x: x - 1, y: y - 1 },
         { x: x + 1, y: y - 1 },
         { x: x - 1, y: y + 1 },
         { x: x + 1, y: y + 1 }
       ];
-      robots.forEach(({ x, y }) => (map[y][x] = '@'));
+      robots.forEach(({ x, y }) => (map[y][x] = MAP['@']));
 
       let path;
       for (const out of getPath(map, robots)) {

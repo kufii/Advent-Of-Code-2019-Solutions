@@ -5,7 +5,7 @@ import { chunk, InfiniteGrid, output2dArray } from '../../util';
 const CELLS = {
   0: ' ',
   1: '█',
-  2: '#',
+  2: '▓',
   3: '═',
   4: '•'
 };
