@@ -83,19 +83,51 @@ const getPath = (map, robots) => {
           })
       )
       .reduce(minBy(([dist]) => dist));
-    memo[memoKey] = [result[0] - distance, result[1].slice(result[1].indexOf(lastKeys[0]) + 1)];
+    memo[memoKey] = [
+      result[0] - distance,
+      result[1].slice(Math.max(...lastKeys.map(key => result[1].indexOf(key))) + 1)
+    ];
 
     return result;
   };
-  const startKeys = robots.map((_, i) => 'start' + i);
-  const [distance, keyPath] = recursive(startKeys, startKeys);
+  const robotLocations = robots.map((_, i) => 'start' + i);
+  const [_, keyPath] = recursive(robotLocations, robotLocations);
   const path = [];
-  if (robots.length === 1) {
-    for (let i = 1; i < keyPath.length; i++) {
-      path.push(...pathsBetween[keyPath[i - 1]][keyPath[i]][1].slice(1));
+  for (const step of keyPath.slice(robots.length)) {
+    const robot = robots.map((_, i) => i).find(i => pathsBetween[robotLocations[i]][step][1]);
+    path.push(
+      ...pathsBetween[robotLocations[robot]][step][1]
+        .slice(1)
+        .map(unKey)
+        .map(({ x, y }) => ({ x, y, robot }))
+    );
+    robotLocations[robot] = step;
+  }
+  return path;
+};
+
+const output = function*(map, robots, path, visualize) {
+  const keys = [];
+  const getVisualization = () =>
+    visualize
+      ? '\n\n' +
+        dedent`
+          Keys: ${keys.join(', ')}
+          ${output2dArray(map)}
+        `
+      : '';
+  if (visualize) {
+    yield getVisualization().trim();
+    for (const { x, y, robot } of path) {
+      map[robots[robot].y][robots[robot].x] = '.';
+      if (map[y][x].match(/[a-z]/u)) keys.push(map[y][x]);
+      map[y][x] = '@';
+      robots[robot].x = x;
+      robots[robot].y = y;
+      yield getVisualization().trim();
     }
   }
-  return [distance, path];
+  yield 'Distance of shortest path: ' + path.length + getVisualization();
 };
 
 export default {
@@ -105,34 +137,14 @@ export default {
 
       const map = parseInput();
       const cells = [...getCells(map)];
-      let { x, y } = cells.find(({ value }) => value === '@');
-      map[y][x] = '.';
-      const [distance, path] = getPath(map, [{ x, y }]);
+      const pos = cells.find(({ value }) => value === '@');
+      const path = getPath(map, [pos]);
 
-      const keys = [];
-      const getVisualization = () =>
-        visualize
-          ? '\n\n' +
-            dedent`
-            Keys: ${keys.join(', ')}
-            ${output2dArray(map)}
-          `
-          : '';
-
-      if (visualize) {
-        for (const key of path) {
-          ({ x, y } = unKey(key));
-          if (map[y][x].match(/[a-z]/u)) keys.push(map[y][x]);
-          map[y][x] = '@';
-          yield getVisualization().trim();
-          map[y][x] = '.';
-        }
-        map[y][x] = '@';
+      for (const out of output(map, [pos], path, visualize)) {
+        yield out;
       }
-
-      yield 'Distance of shortest path: ' + distance + getVisualization();
     },
-  part2: () =>
+  part2: visualize =>
     function*() {
       yield 'Loading... This takes a while...';
 
@@ -146,8 +158,12 @@ export default {
         { x: x - 1, y: y + 1 },
         { x: x + 1, y: y + 1 }
       ];
+      robots.forEach(({ x, y }) => (map[y][x] = '@'));
+      const path = getPath(map, robots);
 
-      yield 'Distance of shortest path: ' + getPath(map, robots)[0];
+      for (const out of output(map, robots, path, visualize)) {
+        yield out;
+      }
     },
   visualize: true,
   interval: 30
