@@ -4,7 +4,7 @@ import { makeArray, output2dArray, InfiniteGrid } from '../../util';
 
 const MAP = {
   0: '.',
-  1: '#'
+  1: '▓'
 };
 
 const getCoordinate = (x, y) => MAP[[...intcode(parse(input), x, y)].pop()];
@@ -25,7 +25,7 @@ export default {
         count +
         (visualize ? '\n\n' + output2dArray(map) : '');
     },
-  part2: visualize =>
+  part2: () =>
     function*() {
       const grid = new InfiniteGrid(' ');
       const getValue = (x, y) => {
