@@ -1,11 +1,17 @@
 import input from './input';
 import { dijkstra, output2dArray } from '../../util';
 
+const MAP = {
+  '#': '▓',
+  '.': '.',
+  '@': '@'
+};
+
 const parseInput = () =>
   input
     .split('\n')
     .filter(Boolean)
-    .map(line => [...line]);
+    .map(line => [...line].map(c => MAP[c] || c));
 
 const neighbors = ({ x, y }) => [
   { x, y: y - 1 },
@@ -28,7 +34,7 @@ const getCells = function*(grid) {
 
 const isPortal = c => c && c.match(/[A-Z]/u);
 
-const isPath = c => c && c === '.';
+const isPath = c => c && c === MAP['.'];
 
 const getPortals = map => {
   const cells = [...getCells(map)];
@@ -101,13 +107,13 @@ export default {
 
       if (visualize) {
         let { x, y } = unKey(portals.AA[0].location);
-        map[y][x] = em('@');
+        map[y][x] = em(MAP['@']);
         yield output2dArray(map);
 
         for (const step of path) {
           map[y][x] = '.';
           ({ x, y } = unKey(step));
-          map[y][x] = em('@');
+          map[y][x] = em(MAP['@']);
           yield output2dArray(map);
         }
       }
@@ -146,7 +152,7 @@ export default {
 
       if (visualize) {
         let { x, y } = unKey(portals.AA[0].location);
-        map[y][x] = em('@');
+        map[y][x] = em(MAP['@']);
 
         yield output();
 
@@ -155,7 +161,7 @@ export default {
           const [loc, f] = step.split(':');
           floor = Number(f);
           ({ x, y } = unKey(loc));
-          map[y][x] = em('@');
+          map[y][x] = em(MAP['@']);
           yield output();
         }
       }
