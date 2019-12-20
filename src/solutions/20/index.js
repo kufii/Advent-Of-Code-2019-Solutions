@@ -151,6 +151,9 @@ export default {
       const output = () => 'Floor: ' + floor + '\n\n' + output2dArray(map);
 
       if (visualize) {
+        const aa = unKey(portals.AA[0].location);
+        const zz = unKey(portals.ZZ[0].location);
+
         let { x, y } = unKey(portals.AA[0].location);
         map[y][x] = em(MAP['@']);
 
@@ -162,6 +165,7 @@ export default {
           floor = Number(f);
           ({ x, y } = unKey(loc));
           map[y][x] = em(MAP['@']);
+          map[aa.y][aa.x] = map[zz.y][zz.x] = MAP[floor === 0 ? '.' : '#'];
           yield output();
         }
       }
