@@ -164,8 +164,8 @@ export default {
           const [loc, f] = step.split(':');
           floor = Number(f);
           ({ x, y } = unKey(loc));
-          map[y][x] = em(MAP['@']);
           map[aa.y][aa.x] = map[zz.y][zz.x] = MAP[floor === 0 ? '.' : '#'];
+          map[y][x] = em(MAP['@']);
           yield output();
         }
       }
