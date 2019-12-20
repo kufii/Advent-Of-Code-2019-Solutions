@@ -129,9 +129,9 @@ export const toPath = (prev, source, dest) => {
   let current;
   do {
     current = current ? prev.get(current) : dest;
-    path.push(current);
+    path.unshift(current);
   } while (current !== source);
-  return path.reverse();
+  return path;
 };
 
 export const chunk = (arr, size = 1) => {
