@@ -7,7 +7,7 @@ const MAP = {
   1: '▓'
 };
 
-const getCoordinate = (x, y) => MAP[[...intcode(parse(input), x, y)].pop()];
+const getCoordinate = (x, y) => MAP[[...intcode(parse(input), [x, y])].pop()];
 
 export default {
   part1: visualize =>

@@ -4,12 +4,12 @@ import { range } from '../../util';
 
 const getThrusterSignal = (program, sequence) => {
   let result = 0;
-  sequence.forEach(n => (result = [...intcode(program.slice(), n, result)].pop()));
+  sequence.forEach(n => (result = [...intcode(program.slice(), [n, result])].pop()));
   return result;
 };
 
 const getThrusterFeedback = (program, sequence) => {
-  const amplifiers = sequence.map(n => intcode(program.slice(), n, 0));
+  const amplifiers = sequence.map(n => intcode(program.slice(), [n, 0]));
   let result;
   let i = 0;
   let value, done;

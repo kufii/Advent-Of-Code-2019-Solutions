@@ -133,12 +133,10 @@ export default {
       }
 
       const { compressed, matches } = compress(moves.join(','));
-      const inputData = [
-        ...([compressed, ...Object.values(matches), 'n'].join('\n') + '\n')
-      ].map(char => char.codePointAt(0));
+      const inputData = [compressed, ...Object.values(matches), 'n'].join('\n') + '\n';
       const program = parse(input);
       program[0] = 2;
-      const dustCollected = [...intcode(program, ...inputData)].pop();
+      const dustCollected = [...intcode(program, inputData)].pop();
 
       yield dedent`
         Dust: ${dustCollected}

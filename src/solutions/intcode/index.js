@@ -1,3 +1,5 @@
+import { isString } from '../../types';
+
 const expandMemory = (nums, pos) =>
   pos >= nums.length && nums.push(...[...'0'.repeat(pos - nums.length + 1)].map(Number));
 
@@ -96,7 +98,11 @@ const readOp = code =>
     .map(Number)
     .reverse();
 
-export default function*(program, ...input) {
+const parseInput = input =>
+  Array.isArray(input) ? input : isString(input) ? [...input].map(c => c.charCodeAt(0)) : [input];
+
+export default function*(program, input) {
+  input = parseInput(input);
   let base = 0;
   let pos = 0;
   while (program[pos] !== 99) {
@@ -104,7 +110,7 @@ export default function*(program, ...input) {
     const params = program.slice(pos + 1, pos + 1 + OPS[op].params);
     if (OPS[op].input) {
       const inp = yield;
-      if (inp != null) input = Array.isArray(inp) ? inp : [inp];
+      if (inp != null) input = parseInput(inp);
     }
     const result = OPS[op].fn(program, base, modes, ...params, input);
     if (OPS[op].output) yield result;
