@@ -15,23 +15,23 @@
   "author": "Adrien Pyke",
   "license": "ISC",
   "dependencies": {
-    "@babel/runtime": "^7.7.6",
+    "@babel/runtime": "^7.7.7",
     "bigint-crypto-utils": "^2.4.2",
     "dedent": "^0.7.0",
     "mithril": "^2.0.4",
     "zaftig": "^0.8.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.5",
-    "@babel/core": "^7.7.5",
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
     "@babel/plugin-transform-runtime": "^7.7.6",
-    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-env": "^7.7.7",
     "babel-loader": "^8.0.6",
-    "eslint": "^6.7.2",
+    "eslint": "^6.8.0",
     "eslint-config-adpyke-es6": "^1.4.13",
     "eslint-config-prettier": "^6.7.0",
     "prettier": "^1.19.1",
-    "webpack": "^4.41.2",
+    "webpack": "^4.41.4",
     "webpack-cli": "^3.3.10"
   }
 }
