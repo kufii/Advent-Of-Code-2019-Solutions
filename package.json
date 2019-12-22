@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@babel/runtime": "^7.7.6",
+    "bigint-crypto-utils": "^2.4.2",
     "dedent": "^0.7.0",
     "mithril": "^2.0.4",
     "zaftig": "^0.8.4"

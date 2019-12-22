@@ -2,5 +2,8 @@
   "extends": ["adpyke-es6", "prettier"],
   "parserOptions": {
     "sourceType": "module"
+  },
+  "globals": {
+    "BigInt": true
   }
 }
