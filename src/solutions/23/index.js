@@ -11,56 +11,50 @@ const getComputers = () => {
   return computers;
 };
 
-export default {
-  part1() {
-    const computers = getComputers();
-    for (let i = 0; i < Infinity; i++) {
-      const { program, queue, output } = computers[i % computers.length];
-      const { value } = program.next(queue[0] != null ? queue[0] : -1);
-      if (value == null) queue.shift();
-      else output.push(value);
-      if (output.length === 3) {
-        const [address, x, y] = output;
-        if (address === 255) return 'Y value of first packet to 255: ' + y;
-        computers[address].queue.push(x, y);
-        computers[i % computers.length].output = [];
-      }
-    }
-  },
-  part2() {
-    const computers = getComputers();
-    let idle = false;
-    let nat = [];
-    const deliveredByNat = new Set();
+const run = function*(endEarly) {
+  const computers = getComputers();
+  let idle = false;
+  let nat = [];
 
-    for (let i = 0; i < Infinity; i++) {
-      const index = i % computers.length;
-      const { program, queue, output } = computers[index];
-      const { value } = program.next(queue[0] != null ? queue[0] : -1);
+  for (let i = 0; i < Infinity; i++) {
+    const index = i % computers.length;
+    const { program, queue, output } = computers[index];
+    const { value } = program.next(queue[0] != null ? queue[0] : -1);
 
-      if (value == null) {
-        if (!queue.length && index === 0) idle = true;
-        else if (queue.length) idle = false;
-        if (idle && index === computers.length - 1) {
-          const [x, y] = nat;
-          if (deliveredByNat.has(y)) return 'First repeating Y value sent by NAT: ' + y;
-          deliveredByNat.add(y);
-          computers[0].queue.push(x, y);
-          nat = [];
-          idle = false;
-        }
-        queue.shift();
-      } else {
-        output.push(value);
+    if (value == null) {
+      if (!queue.length && index === 0) idle = true;
+      else if (queue.length) idle = false;
+      if (idle && index === computers.length - 1) {
+        const [x, y] = nat;
+        yield y;
+        computers[0].queue.push(x, y);
+        nat = [];
         idle = false;
       }
+      queue.shift();
+    } else {
+      output.push(value);
+      idle = false;
+    }
 
-      if (output.length === 3) {
-        const [address, x, y] = output;
-        if (address === 255) nat = [x, y];
-        else computers[address].queue.push(x, y);
-        computers[index].output = [];
-      }
+    if (output.length === 3) {
+      const [address, x, y] = output;
+      if (address === 255) {
+        if (endEarly) return yield y;
+        nat = [x, y];
+      } else computers[address].queue.push(x, y);
+      computers[index].output = [];
+    }
+  }
+};
+
+export default {
+  part1: () => 'Y value of first packet to 255: ' + [...run(true)].pop(),
+  part2() {
+    const natHistory = new Set();
+    for (const y of run()) {
+      if (natHistory.has(y)) return 'First repeating Y value sent by NAT: ' + y;
+      natHistory.add(y);
     }
   }
 };
