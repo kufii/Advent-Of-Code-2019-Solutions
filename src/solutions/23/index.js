@@ -43,7 +43,7 @@ export default {
         else if (queue.length) idle = false;
         if (idle && index === computers.length - 1) {
           const [x, y] = nat;
-          if (deliveredByNat.has(y)) return y;
+          if (deliveredByNat.has(y)) return 'First repeating Y value sent by NAT: ' + y;
           deliveredByNat.add(y);
           computers[0].queue.push(x, y);
           nat = [];
