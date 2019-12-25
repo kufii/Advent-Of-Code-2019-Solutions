@@ -47,8 +47,10 @@ export class InfiniteGrid {
     };
   }
 
-  toArray() {
-    const { min, max } = this.bounds;
+  toArray(min, max) {
+    const bounds = this.bounds;
+    if (min == null) min = bounds.min;
+    if (max == null) max = bounds.max;
     const array = makeArray(max.y - min.y + 1, max.x - min.x + 1, this.fill);
     for (let y = min.y; y <= max.y; y++) {
       for (let x = min.x; x <= max.x; x++) {
@@ -68,6 +70,12 @@ export class InfiniteGrid {
 
   get(x, y) {
     return this.grid.has(this.key(x, y)) ? this.grid.get(this.key(x, y)) : this.fill;
+  }
+
+  clone() {
+    const newGrid = new InfiniteGrid(this.fill);
+    newGrid.grid = new Map(this.grid);
+    return newGrid;
   }
 }
 
