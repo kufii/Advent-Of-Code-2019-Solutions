@@ -29,8 +29,9 @@ export default {
         ({ value, done } = program.next(input));
         output += value;
         input = null;
-        while (!input) {
+        while (!(input && input.trim())) {
           input = yield output.trim();
+          if (input.trim()) output += '\n>' + input.trim();
           if (input.trim() === 'take infinite loop') {
             output += '\nCan you not?';
             input = null;
