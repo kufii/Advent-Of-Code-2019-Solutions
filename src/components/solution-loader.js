@@ -37,6 +37,12 @@ export default () => {
     m.redraw();
   };
 
+  const scrollToBottom = () =>
+    setTimeout(() => {
+      const div = document.querySelector('#output');
+      div.scrollTop = div.scrollHeight;
+    }, 0);
+
   const runGenerator = gen => {
     const data = gen();
     clearOutput();
@@ -44,8 +50,15 @@ export default () => {
     const next = input => {
       try {
         const { value, done } = data.next(input);
-        done ? stopInterval() : (output = value && value.toString());
-        m.redraw();
+        if (generator && value === 'interval') {
+          generator = null;
+          interval = setInterval(next, solutions[day].interval || 0);
+          intervalRunning = true;
+        } else {
+          done ? stopInterval() : (output = value && value.toString());
+          m.redraw();
+          if (solutions[day].autoScroll) scrollToBottom();
+        }
       } catch (err) {
         outputErr(err);
       }
@@ -114,10 +127,7 @@ export default () => {
   const sendGeneratorInput = () => {
     generator.next(generatorInput);
     generatorInput = '';
-    setTimeout(() => {
-      const div = document.querySelector('#output');
-      div.scrollTop = div.scrollHeight;
-    }, 0);
+    scrollToBottom();
   };
 
   return {
