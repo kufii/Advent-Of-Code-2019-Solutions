@@ -8,8 +8,9 @@ const run = function*() {
   let output = '';
   while (!done) {
     ({ value, done } = program.next());
-    output += String.fromCharCode(value);
+    if (value) output += String.fromCharCode(value);
     if (output.endsWith('Command?\n')) {
+      console.log([...output].map(c => c.charCodeAt(0)));
       const input = yield output;
       program.next();
       program.next(input && input.trim() + '\n');

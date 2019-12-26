@@ -208,13 +208,17 @@ export default () => {
                 jc center
               `,
               [
-                m('input#textbox', {
+                m('input#textbox' + z`mb 0.3em`, {
                   type: 'text',
                   value: generatorInput,
                   oninput: e => (generatorInput = e.target.value),
                   onkeypress: e => (e.code === 'Enter' && sendGeneratorInput(), true)
                 }),
-                m('button.pure-button', { type: 'button', onclick: sendGeneratorInput }, 'Send')
+                m(
+                  'button.pure-button' + z`mb 0.3em`,
+                  { type: 'button', onclick: sendGeneratorInput },
+                  'Send'
+                )
               ]
             )
         ]
