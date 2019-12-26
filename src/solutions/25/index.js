@@ -104,7 +104,7 @@ export default {
                 }
               } else if (testItems) {
                 const cmd = cmd => {
-                  output += '\n>' + cmd;
+                  output += '\n>' + cmd + '\n';
                   const value = program.next(cmd).value;
                   output += value;
                   return value;
@@ -145,9 +145,9 @@ export default {
             }
           }
 
-          if (input) output += '\n>' + input;
+          if (input) output += '\n>' + input + '\n';
           if (input === 'take infinite loop') {
-            output += '\nCan you not?';
+            output += '\nCan you not?\n';
             input = null;
           }
           if (input === 'auto') {
