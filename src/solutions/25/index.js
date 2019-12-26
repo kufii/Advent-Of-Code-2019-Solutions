@@ -162,6 +162,7 @@ export default {
     },
   part2: () => 'Advent of Code 2019 Complete!',
   input: true,
+  wrap: true,
   interval: 50,
   autoScroll: true
 };

@@ -187,6 +187,7 @@ export default () => {
                   padding 5
                   mb 0
                   font-size 1em
+                  white-space ${solutions[day].wrap ? 'pre-wrap' : 'pre'}
                 `,
                 loading ? 'Loading...' : solutions[day].html ? m.trust(output) : output
               ),
