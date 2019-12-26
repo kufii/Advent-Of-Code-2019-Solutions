@@ -84,7 +84,7 @@ export default {
 
         while (!input) {
           input = yield output.trim();
-          input = input && input.trim();
+          input = input && input.trim().toLowerCase();
 
           if (isAuto) {
             if (!testItems && takeableItems.length) {

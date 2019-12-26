@@ -201,15 +201,22 @@ export default () => {
             ]
           ),
           generator &&
-            m('div.pure-form', [
-              m('input#textbox', {
-                type: 'text',
-                value: generatorInput,
-                oninput: e => (generatorInput = e.target.value),
-                onkeypress: e => (e.code === 'Enter' && sendGeneratorInput(), true)
-              }),
-              m('button.pure-button', { type: 'button', onclick: sendGeneratorInput }, 'Send')
-            ])
+            m(
+              'div.pure-form' +
+                z`
+                d flex
+                jc center
+              `,
+              [
+                m('input#textbox', {
+                  type: 'text',
+                  value: generatorInput,
+                  oninput: e => (generatorInput = e.target.value),
+                  onkeypress: e => (e.code === 'Enter' && sendGeneratorInput(), true)
+                }),
+                m('button.pure-button', { type: 'button', onclick: sendGeneratorInput }, 'Send')
+              ]
+            )
         ]
       )
   };
