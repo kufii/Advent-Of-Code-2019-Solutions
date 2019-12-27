@@ -217,6 +217,8 @@ export default {
   part2: () => 'Advent of Code 2019 Complete!',
   input: true,
   wrap: true,
+  textAlign: 'start',
+  width: '900px',
   interval: 50,
   autoScroll: true
 };

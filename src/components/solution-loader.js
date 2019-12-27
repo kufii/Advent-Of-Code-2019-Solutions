@@ -182,15 +182,19 @@ export default () => {
               m(
                 'pre' +
                   z`
+                  display inline-block
                   ff 'Mononoki', monospace, monospace
                   line-height 1.13em
                   padding 5
                   mb 0
                   font-size 1em
                   white-space ${solutions[day].wrap ? 'pre-wrap' : 'pre'}
+                  text-align ${solutions[day].textAlign || 'center'}
+                  width ${solutions[day].width || 'auto'}
                 `,
                 loading ? 'Loading...' : solutions[day].html ? m.trust(output) : output
               ),
+              m('br'),
               m(
                 'canvas#canvas' +
                   z`
