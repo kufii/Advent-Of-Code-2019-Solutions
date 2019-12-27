@@ -126,26 +126,28 @@ export default {
             if (!graph[match[1]][OPPOSITES[input]]) graph[match[1]][OPPOSITES[input]] = currentRoom;
           }
 
-          currentRoom = match[1];
-          match = value.match(/Doors here lead:\n((?:- [a-z]+\n)+)/mu);
-          currentDirections = match[1]
-            .trim()
-            .split('\n')
-            .map(d => d.slice(2).trim());
+          if (match[1] !== 'Pressure-Sensitive Floor') {
+            currentRoom = match[1];
+            match = value.match(/Doors here lead:\n((?:- [a-z]+\n)+)/mu);
+            currentDirections = match[1]
+              .trim()
+              .split('\n')
+              .map(d => d.slice(2).trim());
 
-          match = value.match(/Items here:\n((?:- [a-z- ]+\n)+)/imu);
-          currentItems = takeableItems = match
-            ? match[1]
-                .trim()
-                .split('\n')
-                .map(i => i.slice(2).trim())
-            : [];
-          takeableItems = currentItems.filter(i => !BAD_ITEMS.includes(i));
+            match = value.match(/Items here:\n((?:- [a-z- ]+\n)+)/imu);
+            currentItems = takeableItems = match
+              ? match[1]
+                  .trim()
+                  .split('\n')
+                  .map(i => i.slice(2).trim())
+              : [];
+            takeableItems = currentItems.filter(i => !BAD_ITEMS.includes(i));
 
-          isAuto &&
-            currentDirections
-              .filter(d => !graph[currentRoom][d])
-              .forEach(d => (graph[currentRoom][d] = null));
+            isAuto &&
+              currentDirections
+                .filter(d => !graph[currentRoom][d])
+                .forEach(d => (graph[currentRoom][d] = null));
+          }
         }
 
         output += value;
