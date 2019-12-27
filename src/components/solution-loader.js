@@ -186,7 +186,7 @@ export default () => {
                   ff 'Mononoki', monospace, monospace
                   line-height 1.13em
                   padding 5
-                  mb 0
+                  m 0
                   font-size 1em
                   max-width 100%
                   white-space ${solutions[day].wrap ? 'pre-wrap' : 'pre'}
