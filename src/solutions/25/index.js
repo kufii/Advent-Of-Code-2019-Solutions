@@ -1,6 +1,7 @@
 import input from './input';
 import intcode, { parse } from '../intcode';
-import { dijkstra } from '../../util';
+import { dijkstra, getAllSubsets, sortBy } from '../../util';
+import dedent from 'dedent';
 
 const run = function*() {
   let value, done;
@@ -10,7 +11,6 @@ const run = function*() {
     ({ value, done } = program.next());
     if (value) output += String.fromCharCode(value);
     if (output.endsWith('Command?\n')) {
-      console.log([...output].map(c => c.charCodeAt(0)));
       const input = yield output;
       program.next();
       program.next(input && input.trim() + '\n');
@@ -35,17 +35,84 @@ export default {
       let input;
       let value, done;
       const program = run();
-      let output = 'use command "auto" to auto solve';
+      let output = dedent`
+        use command "help" to view a list of commands
+
+        use command "auto" to auto solve
+      `;
       let isAuto = false;
 
       let currentRoom;
       let currentDirections;
+      let currentItems;
       let takeableItems;
 
       const graph = {};
       let path = [];
-      const items = [];
       let testItems = false;
+
+      const outputCmd = cmd => (output += '\n>' + cmd + '\n');
+
+      const runCmd = cmd => {
+        outputCmd(cmd);
+        const value = program.next(cmd).value;
+        output += value;
+        return value;
+      };
+
+      const runItemTest = function*() {
+        const [direction] = Object.entries(graph[currentRoom]).find(
+          ([_, room]) => room === 'Pressure-Sensitive Floor'
+        );
+        const value = runCmd('inv');
+        const match = value.match(/Items in your inventory:\n((?:- [a-z ]+\n)+)/imu);
+        const itemsArray = match
+          ? match[1]
+              .split('\n')
+              .filter(Boolean)
+              .map(i => i.slice(2).trim())
+          : [];
+        const items = new Set(itemsArray);
+        const droppedItems = new Set();
+        yield output.trim();
+
+        const dropItem = item => {
+          droppedItems.add(item);
+          items.delete(item);
+          return runCmd('drop ' + item);
+        };
+
+        const takeItem = item => {
+          droppedItems.delete(item);
+          items.add(item);
+          return runCmd('take ' + item);
+        };
+
+        const dropItems = function*(items) {
+          for (const item of items) {
+            dropItem(item);
+            yield output.trim();
+          }
+        };
+
+        const subsets = getAllSubsets(itemsArray)
+          .filter(arr => arr.length)
+          .sort(sortBy(arr => arr.length));
+
+        while (true) {
+          for (const set of subsets) {
+            yield* dropItems([...items].filter(i => !set.includes(i)));
+            for (const item of set) {
+              if (items.has(item)) continue;
+              takeItem(item);
+              yield output.trim();
+            }
+            const value = runCmd(direction);
+            yield output.trim();
+            if (value.match(/Analysis complete! You may proceed\./mu)) return;
+          }
+        }
+      };
 
       while (!done) {
         ({ value, done } = program.next(input));
@@ -65,14 +132,15 @@ export default {
             .trim()
             .split('\n')
             .map(d => d.slice(2).trim());
-          match = value.match(/Items here:\n((?:- [a-z- ]+\n)+)/mu);
-          takeableItems = match
+
+          match = value.match(/Items here:\n((?:- [a-z- ]+\n)+)/imu);
+          currentItems = takeableItems = match
             ? match[1]
                 .trim()
                 .split('\n')
                 .map(i => i.slice(2).trim())
-                .filter(i => !BAD_ITEMS.includes(i))
             : [];
+          takeableItems = currentItems.filter(i => !BAD_ITEMS.includes(i));
 
           isAuto &&
             currentDirections
@@ -89,9 +157,7 @@ export default {
 
           if (isAuto) {
             if (!testItems && takeableItems.length) {
-              const item = takeableItems.pop();
-              input = 'take ' + item;
-              items.push(item);
+              input = 'take ' + takeableItems.pop();
             } else {
               const [direction] =
                 Object.entries(graph[currentRoom]).find(([_, room]) => !room) || [];
@@ -104,37 +170,10 @@ export default {
                   input = Object.entries(graph[currentRoom]).find(([_, room]) => room === input)[0];
                 }
               } else if (testItems) {
-                const cmd = cmd => {
-                  output += '\n>' + cmd + '\n';
-                  const value = program.next(cmd).value;
-                  output += value;
-                  return value;
-                };
-                const [direction] = Object.entries(graph[currentRoom]).find(
-                  ([_, room]) => room === 'Pressure-Sensitive Floor'
-                );
-                while (items.length) {
-                  const drop = items.pop();
-                  takeableItems.push(drop);
-                  cmd('drop ' + drop);
-                  yield output.trim();
+                for (const output of runItemTest()) {
+                  yield output;
                 }
-                while (true) {
-                  const take = takeableItems.pop();
-                  items.push(take);
-                  cmd('take ' + take);
-                  yield output.trim();
-                  const value = cmd(direction);
-                  yield output.trim();
-                  if (value.match(/Analysis complete! You may proceed\./mu)) return;
-                  if (
-                    value.match(/Alert! Droids on this ship are lighter than the detected value!/mu)
-                  ) {
-                    const drop = items.pop();
-                    cmd('drop ' + drop);
-                    yield output.trim();
-                  }
-                }
+                return;
               } else {
                 path = dijkstra(graph, currentRoom, 'Security Checkpoint', (graph, key) =>
                   Object.values(graph[key])
@@ -146,16 +185,31 @@ export default {
             }
           }
 
-          if (input) output += '\n>' + input + '\n';
-          if (input === 'take infinite loop') {
-            output += '\nCan you not?\n';
-            input = null;
-          }
-          if (input === 'auto') {
+          if (input) outputCmd(input);
+          if (input === 'take infinite loop' && currentItems.includes('infinite loop')) {
+            yield 'interval';
+            while (true) {
+              outputCmd(input);
+              yield output.trim();
+            }
+          } else if (input === 'auto') {
             isAuto = true;
             graph[currentRoom] = currentDirections.reduce((acc, d) => ({ ...acc, [d]: null }), {});
             input = '';
             yield 'interval';
+          } else if (input === 'help') {
+            output += dedent`
+              Move with commands "north", "east", "south", "west"
+
+              Pickup items with "take <item>"
+
+              Drop items with "drop <item>"
+
+              View inventory with "inv"
+
+              Auto solve with "auto"
+            `;
+            input = '';
           }
         }
       }

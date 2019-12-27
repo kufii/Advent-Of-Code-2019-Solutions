@@ -170,3 +170,6 @@ export const sortBy = (...cbs) => (a, b) => {
   return 0;
 };
 export const desc = cb => ((cb.desc = true), cb);
+
+export const getAllSubsets = arr =>
+  arr.reduce((subsets, value) => subsets.concat(subsets.map(set => [value, ...set])), [[]]);
