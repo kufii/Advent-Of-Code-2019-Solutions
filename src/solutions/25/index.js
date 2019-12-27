@@ -198,17 +198,20 @@ export default {
             input = '';
             yield 'interval';
           } else if (input === 'help') {
-            output += dedent`
-              Move with commands "north", "east", "south", "west"
+            output +=
+              '\n' +
+              dedent`
+                Move with commands "north", "east", "south", "west"
 
-              Pickup items with "take <item>"
+                Pickup items with "take <item>"
 
-              Drop items with "drop <item>"
+                Drop items with "drop <item>"
 
-              View inventory with "inv"
+                View inventory with "inv"
 
-              Auto solve with "auto"
-            `;
+                Auto solve with "auto"
+              ` +
+              '\n';
             input = '';
           }
         }
