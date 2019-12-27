@@ -170,9 +170,7 @@ export default {
                   input = Object.entries(graph[currentRoom]).find(([_, room]) => room === input)[0];
                 }
               } else if (testItems) {
-                for (const output of runItemTest()) {
-                  yield output;
-                }
+                yield* runItemTest();
                 return;
               } else {
                 path = dijkstra(graph, currentRoom, 'Security Checkpoint', (graph, key) =>
