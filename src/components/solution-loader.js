@@ -188,6 +188,7 @@ export default () => {
                   padding 5
                   mb 0
                   font-size 1em
+                  max-width 100%
                   white-space ${solutions[day].wrap ? 'pre-wrap' : 'pre'}
                   text-align ${solutions[day].textAlign || 'center'}
                   width ${solutions[day].width || 'auto'}
