@@ -51,9 +51,7 @@ export default {
     const map = parseInput();
     const asteroids = getAsteroids(map);
     const { asteroid, canSee } = getBestLocation(map, asteroids);
-    map[asteroid.y][asteroid.x] = `<span style="color: red; font-weight: bold">${
-      map[asteroid.y][asteroid.x]
-    }</span>`;
+    map[asteroid.y][asteroid.x] = em(map[asteroid.y][asteroid.x]);
     return (
       `# of asteroids that can be detected from ${asteroid.x},${asteroid.y}: ` +
       canSee.length +

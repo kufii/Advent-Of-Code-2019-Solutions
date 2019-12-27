@@ -1,6 +1,6 @@
 import input from './input';
 import intcode, { parse } from '../intcode';
-import { range } from '../../util';
+import { range, getPermutations } from '../../util';
 
 const getThrusterSignal = (program, sequence) => {
   let result = 0;
@@ -20,24 +20,6 @@ const getThrusterFeedback = (program, sequence) => {
     i++;
   }
 
-  return result;
-};
-
-const getPermutations = array => {
-  const result = [];
-
-  const p = (array, temp) => {
-    let i, x;
-    if (!array.length) result.push(temp);
-
-    for (i = 0; i < array.length; i++) {
-      x = array.splice(i, 1)[0];
-      p(array, temp.concat(x));
-      array.splice(i, 0, x);
-    }
-  };
-
-  p(array, []);
   return result;
 };
 

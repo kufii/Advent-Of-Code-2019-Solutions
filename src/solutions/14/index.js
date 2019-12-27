@@ -51,10 +51,10 @@ export default {
       i -= step;
     };
     let step = trillion / 10;
-    do {
+    while (step >= 1) {
       run(step);
       step /= 10;
-    } while (step >= 1);
+    }
     return `# of FUEL ${trillion} ORE can produce: ${i}`;
   }
 };

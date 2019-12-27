@@ -171,5 +171,23 @@ export const sortBy = (...cbs) => (a, b) => {
 };
 export const desc = cb => ((cb.desc = true), cb);
 
+export const getPermutations = arr => {
+  const result = [];
+
+  const p = (arr, temp = []) => {
+    let i, x;
+    if (!arr.length) result.push(temp);
+
+    for (i = 0; i < arr.length; i++) {
+      x = arr.splice(i, 1)[0];
+      p(arr, temp.concat(x));
+      arr.splice(i, 0, x);
+    }
+  };
+
+  p(arr);
+  return result;
+};
+
 export const getAllSubsets = arr =>
   arr.reduce((subsets, value) => subsets.concat(subsets.map(set => [value, ...set])), [[]]);

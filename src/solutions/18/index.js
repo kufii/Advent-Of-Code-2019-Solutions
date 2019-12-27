@@ -3,9 +3,9 @@ import { dijkstra, output2dArray, minBy } from '../../util';
 import dedent from 'dedent';
 
 const MAP = {
-  '#': '█',
+  '#': '▓',
   '.': ' ',
-  '@': '@'
+  '@': '<span style="color: red; font-weight: bold;">@</span>'
 };
 
 const parseInput = () => input.split('\n').map(line => [...line].map(c => MAP[c] || c));
@@ -36,7 +36,7 @@ const getNeighbors = (map, k) =>
 
 const getPath = function*(map, robots, yieldEvery = 1000) {
   const keyLocations = [
-    ...[...getCells(map)].filter(({ value }) => value.match(/[a-z]/u)),
+    ...[...getCells(map)].filter(({ value }) => value.match(/^[a-z]$/u)),
     ...robots.map(({ x, y }, i) => ({ x, y, value: 'start' + i }))
   ];
   const pathsBetween = keyLocations.reduce(
@@ -73,8 +73,8 @@ const getPath = function*(map, robots, yieldEvery = 1000) {
         .map(unKey)
         .some(
           ({ x, y }) =>
-            (map[y][x] !== end && map[y][x].match(/[a-z]/u) && !keys.includes(map[y][x])) ||
-            (map[y][x].match(/[A-Z]/u) && !keys.includes(map[y][x].toLowerCase()))
+            (map[y][x] !== end && map[y][x].match(/^[a-z]$/u) && !keys.includes(map[y][x])) ||
+            (map[y][x].match(/^[A-Z]$/u) && !keys.includes(map[y][x].toLowerCase()))
         );
 
     const results = [];
@@ -139,7 +139,7 @@ const output = function*(map, robots, path, visualize) {
     yield getVisualization().trim();
     for (const { x, y, robot } of path) {
       map[robots[robot].y][robots[robot].x] = MAP['.'];
-      if (map[y][x].match(/[a-z]/u)) keys.push(map[y][x]);
+      if (map[y][x].match(/^[a-z]$/u)) keys.push(map[y][x]);
       map[y][x] = MAP['@'];
       robots[robot].x = x;
       robots[robot].y = y;
@@ -194,5 +194,6 @@ export default {
       }
     },
   visualize: true,
-  interval: 30
+  interval: 30,
+  html: true
 };

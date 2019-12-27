@@ -2,7 +2,7 @@ import input from './input';
 import intcode, { parse } from '../intcode';
 import dedent from 'dedent';
 
-const isAscii = num => num >= 0 && num <= 128;
+const isAscii = num => num > 0 && num <= 128;
 
 const run = script =>
   [...intcode(parse(input), script.trim() + '\n')]
