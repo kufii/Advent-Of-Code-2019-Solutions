@@ -123,7 +123,7 @@ export default {
           if (isAuto) {
             graph[currentRoom][input] = match[1];
             if (!graph[match[1]]) graph[match[1]] = {};
-            if (!graph[match[1]][OPPOSITES[input]]) graph[match[1]][OPPOSITES[input]] = currentRoom;
+            graph[match[1]][OPPOSITES[input]] = currentRoom;
           }
 
           if (match[1] !== 'Pressure-Sensitive Floor') {
