@@ -1,4 +1,5 @@
 import input from './input';
+import { sum } from '../../util';
 
 const parseInput = () => input.split('\n').map(Number);
 
@@ -8,8 +9,6 @@ const getFuelTotal = n => {
   const fuel = getFuel(n);
   return fuel && fuel + getFuelTotal(fuel);
 };
-
-const sum = (a, b) => a + b;
 
 export default {
   part1: () =>
