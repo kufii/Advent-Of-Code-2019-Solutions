@@ -1,5 +1,5 @@
 import input from './input';
-import { dijkstra, output2dArray, minBy } from '../../util';
+import { dijkstra, output2dArray, minBy, nestedLoop } from '../../util';
 import dedent from 'dedent';
 
 const MAP = {
@@ -15,10 +15,8 @@ const key = ({ x, y }) => `${x},${y}`;
 const unKey = key => [key.split(',').map(Number)].map(([x, y]) => ({ x, y }))[0];
 
 const getCells = function*(grid) {
-  for (let y = 0; y < grid.length; y++) {
-    for (let x = 0; x < grid[y].length; x++) {
-      yield { x, y, value: grid[y][x] };
-    }
+  for (const [x, y] of nestedLoop(2, 0, [grid[0].length - 1, grid.length - 1])) {
+    yield { x, y, value: grid[y][x] };
   }
 };
 

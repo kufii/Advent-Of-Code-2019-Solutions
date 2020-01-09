@@ -1,6 +1,6 @@
 import input from './input';
 import intcode, { parse } from '../intcode';
-import { makeArray, output2dArray, InfiniteGrid } from '../../util';
+import { makeArray, output2dArray, InfiniteGrid, nestedLoop } from '../../util';
 
 const MAP = {
   0: '.',
@@ -14,12 +14,10 @@ export default {
     function*() {
       const map = makeArray(50, 50, ' ');
       let count = 0;
-      for (let y = 0; y < map.length; y++) {
-        for (let x = 0; x < map[y].length; x++) {
-          map[y][x] = getCoordinate(x, y);
-          if (map[y][x] === MAP[1]) count++;
-          if (visualize) yield output2dArray(map);
-        }
+      for (const [x, y] of nestedLoop(2, 0, [map[0].length - 1, map.length - 1])) {
+        map[y][x] = getCoordinate(x, y);
+        if (map[y][x] === MAP[1]) count++;
+        if (visualize) yield output2dArray(map);
       }
       yield '# of points affected by tractor beam: ' +
         count +

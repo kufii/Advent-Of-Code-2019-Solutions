@@ -191,3 +191,23 @@ export const getPermutations = arr => {
 
 export const getAllSubsets = arr =>
   arr.reduce((subsets, value) => subsets.concat(subsets.map(set => [value, ...set])), [[]]);
+
+export const nestedLoop = function*(n, min, max, filter) {
+  const getMin = i => (Array.isArray(min) ? min[i] : min);
+  const getMax = i => (Array.isArray(max) ? max[i] : max);
+
+  const arr = [...Array(n)].map((_, i) => getMin(i));
+  let i = 0;
+  while (true) {
+    if (!filter || filter(arr)) yield arr.slice();
+
+    arr[0]++;
+    while (arr[i] === getMax(i) + 1) {
+      arr[i] = getMin(i);
+      i++;
+      if (i === n) return;
+      arr[i]++;
+      if (arr[i] !== getMax(i) + 1) i = 0;
+    }
+  }
+};

@@ -1,6 +1,6 @@
 import input from './input';
 import intcode, { parse } from '../intcode';
-import { sum, output2dArray } from '../../util';
+import { sum, output2dArray, nestedLoop } from '../../util';
 import dedent from 'dedent';
 
 const neighbors = (x, y) => [
@@ -21,10 +21,8 @@ const getMap = function*() {
 const toArray = map => map.split('\n').map(line => [...line]);
 
 const getCells = function*(grid) {
-  for (let y = 0; y < grid.length; y++) {
-    for (let x = 0; x < grid[y].length; x++) {
-      yield { x, y, value: grid[y][x] };
-    }
+  for (const [x, y] of nestedLoop(2, 0, [grid[0].length - 1, grid.length - 1])) {
+    yield { x, y, value: grid[y][x] };
   }
 };
 
@@ -80,25 +78,21 @@ const getPath = function*(grid) {
 };
 
 const compress = str => {
-  for (let a = 1; a <= 20; a++) {
-    for (let b = 1; b <= 20; b++) {
-      for (let c = 1; c <= 20; c++) {
-        const matches = {};
-        let remaining = str;
-        matches.A = remaining.slice(0, a);
-        remaining = remaining.replace(new RegExp(matches.A + ',?', 'gu'), '');
-        matches.B = remaining.slice(0, b);
-        remaining = remaining.replace(new RegExp(matches.B + ',?', 'gu'), '');
-        matches.C = remaining.slice(0, c);
-        remaining = remaining.replace(new RegExp(matches.C + ',?', 'gu'), '');
-        if (!remaining) {
-          let compressed = str;
-          Object.entries(matches).forEach(
-            ([key, value]) => (compressed = compressed.replace(new RegExp(value, 'gu'), key))
-          );
-          return { compressed, matches };
-        }
-      }
+  for (const [a, b, c] of nestedLoop(3, 1, 20)) {
+    const matches = {};
+    let remaining = str;
+    matches.A = remaining.slice(0, a);
+    remaining = remaining.replace(new RegExp(matches.A + ',?', 'gu'), '');
+    matches.B = remaining.slice(0, b);
+    remaining = remaining.replace(new RegExp(matches.B + ',?', 'gu'), '');
+    matches.C = remaining.slice(0, c);
+    remaining = remaining.replace(new RegExp(matches.C + ',?', 'gu'), '');
+    if (!remaining) {
+      let compressed = str;
+      Object.entries(matches).forEach(
+        ([key, value]) => (compressed = compressed.replace(new RegExp(value, 'gu'), key))
+      );
+      return { compressed, matches };
     }
   }
 };

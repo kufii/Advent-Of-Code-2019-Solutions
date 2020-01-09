@@ -1,14 +1,12 @@
 import input from './input';
-import { makeArray, output2dArray, sum, sortBy } from '../../util';
+import { makeArray, output2dArray, sum, sortBy, nestedLoop } from '../../util';
 import dedent from 'dedent';
 
 const parseInput = () => input.split('\n').map(line => [...line]);
 
-const iterate = function*(arr) {
-  for (let y = 0; y < arr.length; y++) {
-    for (let x = 0; x < arr[y].length; x++) {
-      yield { x, y, value: arr[y][x] };
-    }
+const getCells = function*(grid) {
+  for (const [x, y] of nestedLoop(2, 0, [grid[0].length - 1, grid.length - 1])) {
+    yield { x, y, value: grid[y][x] };
   }
 };
 
@@ -90,7 +88,7 @@ export default {
           nextState[depth] = nextState[depth] || createLevel();
           depth = Number(depth);
 
-          [...iterate(array)]
+          [...getCells(array)]
             .filter(({ value }) => value !== '?')
             .forEach(({ x, y }) => {
               const value = array[y][x];
@@ -117,7 +115,7 @@ export default {
                   : value === '.'
                   ? []
                   : depths[depth + 1]
-                  ? [...iterate(depths[depth + 1])].filter(
+                  ? [...getCells(depths[depth + 1])].filter(
                       c =>
                         c.value === '#' &&
                         (x === 1
