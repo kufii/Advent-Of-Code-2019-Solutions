@@ -5,7 +5,7 @@ import solutions from '../solutions';
 import { isGenerator } from '../types';
 
 export default () => {
-  let day = localStorage.getItem('day') || 0;
+  let day = Math.min(localStorage.getItem('day') || 0, solutions.length - 1);
   let visualize = true;
   let loading = false;
   let output = '';
@@ -176,7 +176,7 @@ export default () => {
           m(
             'div#output' +
               z`
-              overflow auto
+              overflow hidden
             `,
             [
               m(
@@ -185,13 +185,14 @@ export default () => {
                   display inline-block
                   ff 'Mononoki', monospace, monospace
                   line-height 1.13em
-                  padding 5
+                  overflow: auto
                   m 0
                   font-size 1em
                   max-width 100%
                   white-space ${solutions[day].wrap ? 'pre-wrap' : 'pre'}
                   text-align ${solutions[day].textAlign || 'center'}
                   width ${solutions[day].width || 'auto'}
+                  height 100%
                 `,
                 loading ? 'Loading...' : solutions[day].html ? m.trust(output) : output
               ),
