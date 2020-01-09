@@ -150,9 +150,8 @@ export default {
       }
 
       yield '# of bugs after 200 minutes: ' +
-        Object.entries(depths).flatMap(([_, array]) =>
-          array.flatMap(line => line.filter(c => c === '#'))
-        ).length +
+        Object.values(depths).flatMap(array => array.flatMap(line => line.filter(c => c === '#')))
+          .length +
         (visualize ? '\n\n' + getVisualization() : '');
     },
   visualize: true,
