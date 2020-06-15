@@ -39,7 +39,7 @@ export default () => {
 
   const scrollToBottom = () =>
     setTimeout(() => {
-      const div = document.querySelector('#output > pre');
+      const div = document.querySelector('#output');
       div.scrollTop = div.scrollHeight;
     }, 0);
 
@@ -174,13 +174,13 @@ export default () => {
             ])
           ),
           m(
-            'div#output' +
+            'div' +
               z`
               overflow hidden
             `,
             [
               m(
-                'pre' +
+                'pre#output' +
                   z`
                   display inline-block
                   ff 'Mononoki', monospace, monospace
