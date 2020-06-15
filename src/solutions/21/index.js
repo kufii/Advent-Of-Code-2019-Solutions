@@ -5,6 +5,8 @@ import dedent from 'dedent';
 const isAscii = num => num > 0 && num <= 128;
 
 const run = script =>
+  script.trim() +
+  '\n\n' +
   [...intcode(parse(input), script.trim() + '\n')]
     .filter(Boolean)
     .map(c => (isAscii(c) ? String.fromCodePoint(c) : c.toString()))
@@ -35,5 +37,6 @@ export default {
       OR T J
       AND D J
       RUN
-    `)
+    `),
+  textAlign: 'start'
 };
