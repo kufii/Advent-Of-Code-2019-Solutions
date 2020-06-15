@@ -39,7 +39,7 @@ export default () => {
 
   const scrollToBottom = () =>
     setTimeout(() => {
-      const div = document.querySelector('#output');
+      const div = document.querySelector('#output > pre');
       div.scrollTop = div.scrollHeight;
     }, 0);
 
